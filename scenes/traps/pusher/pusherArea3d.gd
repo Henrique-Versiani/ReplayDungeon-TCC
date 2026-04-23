@@ -10,7 +10,7 @@ func Disable():
 	tween.tween_property($"../CylinderMesh", "scale:y", 0, 0.01)
 	tween.tween_property($"../CollisionShape3D", "position", Vector3.ZERO, 0.125)
 	await tween.finished
-	$"..".trap_state = TRAP.ForceDisabledMode()
+	$"..".Disable()
 
-func Enable():
-	$"..".trap_state = TRAP.ForceHiddenMode()
+func Enable(starting_state: TrapState = TrapState.hidden):
+	$"..".Enable(starting_state)

@@ -1,7 +1,5 @@
 extends TRAP
 
-var trap_state: TrapState = TrapState.active
-
 var move_speed: 	float = randf_range(1.0, 2.5)
 var rotation_speed: float = 5.0
 var x_range:		float = 2
@@ -24,14 +22,13 @@ func _on_body_entered(body):
 		TRAP.KillPlayer(body)
 		
 func Disable():
-	trap_state = TRAP.ForceDisabledMode()
+	super.Disable()
 	var tween:Tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_EXPO)
 	tween.tween_property($".", "position:y", position.y - 0.25, 0.5)
 	await tween.finished
 
-func Enable():
-	trap_state = TRAP.ForceEnabledMode()
+func Enable(starting_state: TrapState = TrapState.active):
+	super.Enable(starting_state)
 	var tween:Tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_EXPO)
 	tween.tween_property($".", "position:y", position.y + 0.25, 0.5)
 	await tween.finished
-

@@ -1,7 +1,7 @@
 extends TRAP
 
 func Disable():
-	$"..".trap_state = TRAP.ForceDisabledMode()
+	$"..".Disable()
 
-func Enable():
-	$"..".trap_state = TRAP.ForceEnabledMode()
+func Enable(starting_state: TrapState = TrapState.hidden):
+	$"..".Enable(starting_state)

@@ -3,17 +3,12 @@ extends TRAP
 const ROTATION_SPEED: 	float = 0.1
 const SPIN_INTERVAL: 	float = 2.25
 
-var trap_state: TrapState = TrapState.active
-
 var spin_timer: float = 0
 var previous_raycast_rotation: float = 0 
 var rotation_dest: float = 0.0
 
 func _ready():
 	previous_raycast_rotation = GetCurrentRotationDeg()
-	#SpinHitboxes()
-	#CalculateRotation(previous_raycast_rotation)
-	#spin_timer = 0
 	PerformSpin()
 	UpdateRotation()
 
@@ -71,10 +66,8 @@ func TransformVector3ToVector2(dir: Vector3) -> Vector2:
 func _on_area_3d_body_entered(body):
 	if previous_raycast_rotation:
 		var current_ray_cast_rotation= $RayCast3D.rotation.y
-		#SENTIDO HORARIO e PLAYER ABAXIO DO MEIO DO SPINNER
 		if current_ray_cast_rotation < previous_raycast_rotation and abs(position.z) > abs(body.position.z):
 			body.Move(Vector2.RIGHT * 3, true)
-		#SENTIDO HORARIO e PLAYER ACIMA DO MEIO DO SPINNER
 		elif current_ray_cast_rotation < previous_raycast_rotation and abs(position.z) < abs(body.position.z):
 			body.Move(Vector2.LEFT * 3, true)
 		elif current_ray_cast_rotation < previous_raycast_rotation and abs(position.z) == abs(body.position.z) and abs(position.x) > abs(body.position.x):
