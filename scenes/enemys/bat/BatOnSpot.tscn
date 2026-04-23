@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cyxn15sst1sgt"]
+
+[ext_resource type="Script" path="res://scenes/enemys/bat/bat.gd" id="1_15jk2"]
+[ext_resource type="PackedScene" uid="uid://ck6mfq8phfrcr" path="res://scenes/enemys/bat/bat_model.tscn" id="1_v5t67"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7qdio"]
+radius = 0.25
+
+[node name="BatOnSpot" type="CharacterBody3D"]
+script = ExtResource("1_15jk2")
+
+[node name="BatModel" parent="." instance=ExtResource("1_v5t67")]
+transform = Transform3D(-1, -6.18173e-08, -6.18173e-08, 0, 0.707107, -0.707107, 8.74228e-08, -0.707107, -0.707107, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BatModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.396337, -0.157828)
+shape = SubResource("SphereShape3D_7qdio")
+
+[connection signal="body_entered" from="BatModel" to="." method="_on_bat_model_body_entered"]

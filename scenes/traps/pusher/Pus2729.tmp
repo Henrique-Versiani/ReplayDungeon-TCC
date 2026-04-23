@@ -1,0 +1,131 @@
+[gd_scene load_steps=14 format=3 uid="uid://h63g6vxedfyw"]
+
+[ext_resource type="Script" path="res://scenes/traps/pusher/Pusher.gd" id="1_hv22o"]
+[ext_resource type="Shader" path="res://shaders/cut_off.gdshader" id="2_bvu5k"]
+[ext_resource type="Script" path="res://scenes/traps/pusher/CylinderMesh.gd" id="3_xx6d2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_et5of"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_bvu5k")
+shader_parameter/cutplane = null
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5k2vi"]
+resource_local_to_scene = true
+height = 4.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fslav"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ah5ef"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_454ot"]
+material = SubResource("StandardMaterial3D_ah5ef")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hgfay"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xptj8"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="Animation" id="Animation_uu47w"]
+resource_name = "push"
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TipMesh")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.2, 0, 0, 0.2, 1, 0.4, 0, 0, 0.4, 1, 0.8, 0, 0, 0.6, 1, 1.2, 0, 0, 0.8, 1, 1.6, 0, 0, 1, 1, 2, 0, 0)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CylinderMesh")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.2, 1, 0, 0, 0, 0.4, 1, 0, 0, 0, 0.6, 1, 0, 0, 0, 0.8, 1, 0, 0, 0, 1, 1, 0, 0, 0)
+tracks/2/type = "scale_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CylinderMesh")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.15, 0.1, 0.15, 0.2, 1, 0.15, 0.2, 0.15, 0.4, 1, 0.15, 0.4, 0.15, 0.6, 1, 0.15, 0.6, 0.15, 0.8, 1, 0.15, 0.8, 0.15, 1, 1, 0.15, 1, 0.15)
+
+[sub_resource type="Animation" id="Animation_p7dmf"]
+resource_name = "retract"
+step = 0.2
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CylinderMesh")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.2, 1, 0, 0, 0, 0.4, 1, 0, 0, 0, 0.6, 1, 0, 0, 0, 0.8, 1, 0, 0, 0, 1, 1, 0, 0, 0)
+tracks/1/type = "scale_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CylinderMesh")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.15, 1, 0.15, 0.2, 1, 0.15, 0.8, 0.15, 0.4, 1, 0.15, 0.6, 0.15, 0.6, 1, 0.15, 0.4, 0.15, 0.8, 1, 0.15, 0.2, 0.15, 1, 1, 0.15, 0.1, 0.15)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TipMesh")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 2, 0, 0, 0.2, 1, 1.6, 0, 0, 0.4, 1, 1.2, 0, 0, 0.6, 1, 0.8, 0, 0, 0.8, 1, 0.4, 0, 0, 1, 1, 0.2, 0, 0)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_163hu"]
+_data = {
+"push": SubResource("Animation_uu47w"),
+"retract": SubResource("Animation_p7dmf")
+}
+
+[node name="Pusher" type="Area3D"]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+script = ExtResource("1_hv22o")
+
+[node name="CylinderMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(-6.55671e-09, 0.1, -6.55671e-09, 0, -4.37114e-09, -0.15, -0.15, -4.37114e-09, 2.86603e-16, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_et5of")
+mesh = SubResource("CylinderMesh_5k2vi")
+script = ExtResource("3_xx6d2")
+
+[node name="Area3D" type="Area3D" parent="CylinderMesh"]
+transform = Transform3D(-2.91409e-07, 0, -6.66667, 1, -4.37114e-08, -4.37114e-08, -2.91409e-07, -6.66667, 1.27379e-14, -5.82819e-07, 2, -5.82819e-07)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CylinderMesh/Area3D"]
+transform = Transform3D(2, -1.42109e-14, -1.42109e-14, 1.353e-21, 0.6, 0, 0, 6.35275e-22, 0.6, -1, 3.55271e-15, 3.55271e-15)
+shape = SubResource("BoxShape3D_fslav")
+
+[node name="CutOff" type="Node3D" parent="CylinderMesh"]
+transform = Transform3D(10, 0, 0, 0, 6.66667, 0, 0, 0, 6.66667, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="CylinderMesh/CutOff"]
+transform = Transform3D(3, -7.10543e-15, 0, -5.68434e-14, 3, 1.25278e-22, 0, 3.34075e-22, 3, 0, 0, 0)
+top_level = true
+
+[node name="TipMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0.2, 0, 0)
+mesh = SubResource("BoxMesh_454ot")
+
+[node name="RayCast3D" type="RayCast3D" parent="TipMesh"]
+transform = Transform3D(10, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="TipMesh"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TipMesh/Area3D"]
+shape = SubResource("BoxShape3D_hgfay")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_xptj8")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_163hu")
+}
+
+[connection signal="body_entered" from="TipMesh/Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

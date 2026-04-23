@@ -1,0 +1,72 @@
+[gd_scene load_steps=10 format=3 uid="uid://bh68kmx65co4l"]
+
+[ext_resource type="Script" path="res://scenes/enemys/golem/golem.gd" id="1_rlqr7"]
+[ext_resource type="ArrayMesh" uid="uid://b14u1txa6dbkm" path="res://assets/Crates/crate-strong.obj" id="2_265ca"]
+[ext_resource type="AudioStream" uid="uid://45yshtdcsfwl" path="res://assets/audio/golem1.wav" id="3_hcita"]
+[ext_resource type="AudioStream" uid="uid://bxtjla14aenm0" path="res://assets/audio/golem2.wav" id="4_pwd5l"]
+[ext_resource type="AudioStream" uid="uid://mebx2t44o48y" path="res://assets/audio/golem3.wav" id="5_8sxg6"]
+[ext_resource type="AudioStream" uid="uid://cjfd1lle7h7qi" path="res://assets/audio/golem4.wav" id="6_1n7mp"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cu2kr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7f6ra"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_j6tth"]
+streams_count = 4
+stream_0/stream = ExtResource("3_hcita")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("4_pwd5l")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("5_8sxg6")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("6_1n7mp")
+stream_3/weight = 1.0
+
+[node name="Golem" type="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collision_layer = 18
+collision_mask = 18
+script = ExtResource("1_rlqr7")
+
+[node name="ArrowCollision" type="Area3D" parent="."]
+visible = false
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ArrowCollision"]
+shape = SubResource("BoxShape3D_cu2kr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -0.456879, 0)
+mesh = ExtResource("2_265ca")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+collision_layer = 16
+collision_mask = 16
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("BoxShape3D_7f6ra")
+
+[node name="RayCastFront" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, 1)
+collision_mask = 17
+
+[node name="RayCastBack" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -1)
+collision_mask = 17
+
+[node name="RayCastLeft" type="RayCast3D" parent="."]
+target_position = Vector3(-1, 0, 0)
+collision_mask = 17
+
+[node name="RayCastRight" type="RayCast3D" parent="."]
+target_position = Vector3(1, 0, 0)
+collision_mask = 17
+
+[node name="RayCastDown" type="RayCast3D" parent="."]
+target_position = Vector3(0, -10, 0)
+collision_mask = 17
+
+[node name="GolemSFX" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_j6tth")
+volume_db = -20.0

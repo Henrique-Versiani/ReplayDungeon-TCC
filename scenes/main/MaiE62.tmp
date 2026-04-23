@@ -1,0 +1,42 @@
+[gd_scene load_steps=11 format=3 uid="uid://cb3mdlwl6ofcd"]
+
+[ext_resource type="MeshLibrary" uid="uid://b8316oxg7blx3" path="res://mesh library/PlataformMeshLibrary.tres" id="1_61cfi"]
+[ext_resource type="Script" path="res://scenes/main/Main.gd" id="1_rh0y3"]
+[ext_resource type="Script" path="res://scenes/main/GridMapManager.gd" id="2_j02ab"]
+[ext_resource type="PackedScene" uid="uid://cxf0vsexdgqe8" path="res://scenes/screens/ScreensManager.tscn" id="3_wkk06"]
+[ext_resource type="PackedScene" uid="uid://b0trehguqisut" path="res://scenes/player/Player.tscn" id="4_tmfgm"]
+[ext_resource type="PackedScene" uid="uid://3jy3bw6e32my" path="res://scenes/player/characters/Robot.tscn" id="5_aeylb"]
+[ext_resource type="Script" path="res://scenes/player/characters/Character.gd" id="6_yoio1"]
+[ext_resource type="Script" path="res://scenes/main/CameraMovement.gd" id="7_7422i"]
+
+[sub_resource type="Environment" id="Environment_dgh8y"]
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Resource" id="Resource_8i41c"]
+script = ExtResource("6_yoio1")
+name = "Robot"
+scene = ExtResource("5_aeylb")
+
+[node name="Main" type="Node"]
+script = ExtResource("1_rh0y3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_dgh8y")
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("1_61cfi")
+cell_size = Vector3(1, 1, 1)
+cell_center_y = false
+cell_scale = 0.5
+script = ExtResource("2_j02ab")
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Player" parent="." instance=ExtResource("4_tmfgm")]
+character = SubResource("Resource_8i41c")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.422618, 0.906308, 0, -0.906308, 0.422618, 3.5, 15, 5)
+script = ExtResource("7_7422i")
+
+[node name="ScreensManager" parent="." instance=ExtResource("3_wkk06")]

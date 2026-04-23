@@ -1,0 +1,151 @@
+[gd_scene load_steps=17 format=3 uid="uid://b0trehguqisut"]
+
+[ext_resource type="Script" path="res://scenes/player/Player.gd" id="1_bv4t5"]
+[ext_resource type="PackedScene" uid="uid://3jy3bw6e32my" path="res://scenes/player/characters/Robot/Robot.tscn" id="2_dabqg"]
+[ext_resource type="Script" path="res://scenes/player/characters/Character.gd" id="3_3ss54"]
+[ext_resource type="AudioStream" uid="uid://bxu76qi27snh1" path="res://assets/audio/jump.wav" id="4_b6bsm"]
+[ext_resource type="ArrayMesh" uid="uid://deu06eho4c74" path="res://assets/Platform Kit/meshes/dust.res" id="5_igblj"]
+[ext_resource type="AudioStream" uid="uid://m44vpqptr0eu" path="res://assets/audio/coin.wav" id="5_yvl8y"]
+[ext_resource type="AudioStream" uid="uid://c1a0wqfjwkjq3" path="res://assets/audio/teleport.wav" id="6_2i1ct"]
+[ext_resource type="AudioStream" uid="uid://dflf7y8os5k6i" path="res://assets/audio/playerdie1.wav" id="8_5eqni"]
+[ext_resource type="AudioStream" uid="uid://bv4ai8b16d181" path="res://assets/audio/playerdie2.wav" id="9_g6ywo"]
+[ext_resource type="AudioStream" uid="uid://2gfp76p1pfjd" path="res://assets/audio/fall.wav" id="9_u0op1"]
+[ext_resource type="AudioStream" uid="uid://dk3rkcvifvxfp" path="res://assets/audio/playerdie3.wav" id="10_jejw3"]
+[ext_resource type="AudioStream" uid="uid://1kwh6nnatjqe" path="res://assets/audio/playerdie4.wav" id="11_l6rec"]
+[ext_resource type="Script" path="res://scenes/player/TraumaHandler.gd" id="13_u1606"]
+
+[sub_resource type="Resource" id="Resource_lfrx1"]
+script = ExtResource("3_3ss54")
+name = "Robot"
+scene = ExtResource("2_dabqg")
+
+[sub_resource type="Curve" id="Curve_qoeyo"]
+_data = [Vector2(0, 0.021579), 0.0, 0.0, 0, 0, Vector2(0.19837, 0.746842), 0.0, 0.0, 0, 0, Vector2(0.747283, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5ft1j"]
+streams_count = 4
+stream_0/stream = ExtResource("8_5eqni")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("9_g6ywo")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("10_jejw3")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("11_l6rec")
+stream_3/weight = 1.0
+
+[node name="Player" type="CharacterBody3D" groups=["player"]]
+disable_mode = 2
+script = ExtResource("1_bv4t5")
+character = SubResource("Resource_lfrx1")
+
+[node name="FaceDirection" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.5, 0)
+hit_back_faces = false
+collide_with_bodies = false
+
+[node name="StaticBodyDetectionGroup" type="Node3D" parent="."]
+
+[node name="StaticBodyDetection4" type="RayCast3D" parent="StaticBodyDetectionGroup"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.5, 0)
+collision_mask = 512
+collide_with_areas = true
+
+[node name="StaticBodyDetection3" type="RayCast3D" parent="StaticBodyDetectionGroup"]
+transform = Transform3D(1, 0, 0, 0, 1.31134e-07, -1, 0, 1, 1.31134e-07, 0, 0.5, 0)
+collision_mask = 512
+collide_with_areas = true
+
+[node name="StaticBodyDetection2" type="RayCast3D" parent="StaticBodyDetectionGroup"]
+transform = Transform3D(4.37114e-08, 1, -8.74228e-08, 1, -4.37114e-08, 0, -3.82137e-15, -8.74228e-08, -1, 0, 0.5, 0)
+collision_mask = 512
+collide_with_areas = true
+
+[node name="StaticBodyDetection" type="RayCast3D" parent="StaticBodyDetectionGroup"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.5, 0)
+collision_mask = 512
+collide_with_areas = true
+
+[node name="GolemDetectionGroup" type="Node3D" parent="."]
+
+[node name="GolemDetection4" type="RayCast3D" parent="GolemDetectionGroup"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.5, 0)
+collision_mask = 16
+collide_with_areas = true
+
+[node name="GolemDetection3" type="RayCast3D" parent="GolemDetectionGroup"]
+transform = Transform3D(1, 0, 0, 0, 1.31134e-07, -1, 0, 1, 1.31134e-07, 0, 0.5, 0)
+collision_mask = 16
+collide_with_areas = true
+
+[node name="GolemDetection2" type="RayCast3D" parent="GolemDetectionGroup"]
+transform = Transform3D(4.37114e-08, 1, -8.74228e-08, 1, -4.37114e-08, 0, -3.82137e-15, -8.74228e-08, -1, 0, 0.5, 0)
+collision_mask = 16
+collide_with_areas = true
+
+[node name="GolemDetection" type="RayCast3D" parent="GolemDetectionGroup"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.5, 0)
+collision_mask = 16
+collide_with_areas = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+
+[node name="IdleTimer" type="Timer" parent="."]
+wait_time = 15.0
+
+[node name="AroundLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.2, 0.5)
+emitting = false
+amount = 15
+lifetime = 0.13
+one_shot = true
+speed_scale = 0.5
+mesh = ExtResource("5_igblj")
+emission_shape = 3
+emission_box_extents = Vector3(0.5, 0.5, 0)
+particle_flag_align_y = true
+direction = Vector3(0, 1, 0)
+gravity = Vector3(0, 0, 0)
+initial_velocity_max = 5.0
+radial_accel_min = 4.0
+radial_accel_max = 4.0
+scale_amount_min = 0.2
+scale_amount_max = 0.8
+scale_amount_curve = SubResource("Curve_qoeyo")
+
+[node name="JumpSFX" type="AudioStreamPlayer" parent="." groups=["SFX"]]
+stream = ExtResource("4_b6bsm")
+volume_db = -7.5
+max_polyphony = 2
+
+[node name="CoinSFX" type="AudioStreamPlayer" parent="." groups=["SFX"]]
+stream = ExtResource("5_yvl8y")
+volume_db = -4.5
+pitch_scale = 2.0
+max_polyphony = 3
+
+[node name="TeleportSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_2i1ct")
+volume_db = -4.5
+max_polyphony = 3
+
+[node name="DieSFX" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_5ft1j")
+volume_db = -8.0
+max_polyphony = 3
+
+[node name="FallSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_u0op1")
+volume_db = -4.5
+max_polyphony = 3
+
+[node name="AudioListener3D" type="AudioListener3D" parent="."]
+current = true
+
+[node name="TraumaHandler" type="Node" parent="."]
+script = ExtResource("13_u1606")
+
+[connection signal="timeout" from="IdleTimer" to="TraumaHandler" method="_on_idle_timer_timeout"]

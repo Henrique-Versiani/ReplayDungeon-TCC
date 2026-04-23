@@ -1,0 +1,110 @@
+[gd_scene load_steps=18 format=3 uid="uid://cb3mdlwl6ofcd"]
+
+[ext_resource type="Script" path="res://scenes/main/Main.gd" id="1_rh0y3"]
+[ext_resource type="MeshLibrary" uid="uid://l7rwvq36l45t" path="res://mesh library/MeshLibrary1.tres" id="2_b5eex"]
+[ext_resource type="Script" path="res://scenes/maps/GridMapManager.gd" id="3_f3p7h"]
+[ext_resource type="Texture2D" uid="uid://d1x6pepgwuwni" path="res://assets/icon.svg" id="3_gubtd"]
+[ext_resource type="PackedScene" uid="uid://cxf0vsexdgqe8" path="res://scenes/screens/ScreensManager.tscn" id="3_wkk06"]
+[ext_resource type="PackedScene" uid="uid://b0trehguqisut" path="res://scenes/player/Player.tscn" id="4_tmfgm"]
+[ext_resource type="Script" path="res://scenes/main/CameraFrontal.gd" id="7_4wavc"]
+[ext_resource type="Script" path="res://scenes/main/camera/CameraMovement.gd" id="7_sf2yc"]
+[ext_resource type="PackedScene" uid="uid://dc41dh1mtw5nq" path="res://scenes/screens/HUD/HUD.tscn" id="8_kb84f"]
+[ext_resource type="Shader" path="res://shaders/Pixel.gdshader" id="8_vd43d"]
+[ext_resource type="AudioStream" uid="uid://cnewwnrb8iqyl" path="res://assets/audio/menu_music.wav" id="11_5p24y"]
+[ext_resource type="Script" path="res://scenes/main/MenuMusic.gd" id="12_f4yc3"]
+[ext_resource type="AudioStream" uid="uid://cdsax7i63y2tm" path="res://assets/audio/game_music.wav" id="13_iricq"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_eiktk"]
+
+[sub_resource type="Sky" id="Sky_ovci3"]
+sky_material = SubResource("ProceduralSkyMaterial_eiktk")
+
+[sub_resource type="Environment" id="Environment_mu2mr"]
+background_mode = 1
+sky = SubResource("Sky_ovci3")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.1
+reflected_light_source = 1
+tonemap_mode = 1
+tonemap_exposure = 0.7
+glow_enabled = true
+glow_normalized = true
+glow_strength = 1.15
+glow_bloom = 1.0
+glow_blend_mode = 4
+fog_light_energy = 0.15
+fog_density = 0.025
+fog_height_density = 4.1626
+adjustment_enabled = true
+adjustment_saturation = 2.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yjitu"]
+resource_local_to_scene = true
+shader = ExtResource("8_vd43d")
+shader_parameter/pixelate = 512.0
+
+[node name="Main" type="Node"]
+script = ExtResource("1_rh0y3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_mu2mr")
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("2_b5eex")
+cell_size = Vector3(1, 1, 1)
+cell_center_y = false
+cell_scale = 0.5
+script = ExtResource("3_f3p7h")
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Player" parent="." instance=ExtResource("4_tmfgm")]
+disable_mode = 0
+
+[node name="CameraOrtogonal" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866026, 0, -0.866026, 0.5, 22.5, 8.5, 0)
+keep_aspect = 0
+projection = 1
+current = true
+fov = 37.8493
+size = 6.5
+frustum_offset = Vector2(0, 0.125)
+far = 20.0
+script = ExtResource("7_sf2yc")
+move_speed = 1.5
+
+[node name="Sprite2D" type="Sprite2D" parent="CameraOrtogonal"]
+visible = false
+light_mask = 0
+material = SubResource("ShaderMaterial_yjitu")
+position = Vector2(242.5, 426)
+scale = Vector2(3.78906, 6.76562)
+texture = ExtResource("3_gubtd")
+
+[node name="CameraFrontal" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.927184, 0.374607, 0, -0.374607, 0.927184, 22.5, 1, 1.5)
+keep_aspect = 0
+projection = 1
+current = true
+size = 20.0
+far = 20.0
+script = ExtResource("7_4wavc")
+
+[node name="ScreensManager" parent="." instance=ExtResource("3_wkk06")]
+
+[node name="HUD" parent="." instance=ExtResource("8_kb84f")]
+visible = false
+
+[node name="MenuMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_5p24y")
+volume_db = -20.0
+script = ExtResource("12_f4yc3")
+
+[node name="GameMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_iricq")
+volume_db = -20.0
+script = ExtResource("12_f4yc3")
+
+[connection signal="game_started" from="ScreensManager" to="Player" method="_on_screens_manager_game_started"]
+[connection signal="finished" from="MenuMusic" to="MenuMusic" method="_on_finished"]
+[connection signal="finished" from="GameMusic" to="GameMusic" method="_on_finished"]

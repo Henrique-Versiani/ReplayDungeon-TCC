@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Character" load_steps=3 format=3 uid="uid://c3rnw40ns1dcy"]
+
+[ext_resource type="PackedScene" uid="uid://dhfa84iajqg5h" path="res://scenes/player/characters/Blaze/Blaze.tscn" id="1_8ruw4"]
+[ext_resource type="Script" path="res://scenes/player/characters/Character.gd" id="2_fku1c"]
+
+[resource]
+script = ExtResource("2_fku1c")
+name = "Blaze"
+scene = ExtResource("1_8ruw4")

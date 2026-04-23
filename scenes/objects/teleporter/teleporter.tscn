@@ -1,0 +1,68 @@
+[gd_scene load_steps=11 format=3 uid="uid://o8kevj2tysww"]
+
+[ext_resource type="Script" path="res://scenes/objects/teleporter/teleporter.gd" id="1_4sfp1"]
+[ext_resource type="Material" uid="uid://dmmrcm33gx8mh" path="res://scenes/objects/teleporter/teleporter.tres" id="2_8qj4y"]
+[ext_resource type="PackedScene" uid="uid://do8sg1k5xvj2h" path="res://assets/Platform Kit/platform.glb" id="3_iscke"]
+[ext_resource type="Texture2D" uid="uid://bl58mqevh8k7v" path="res://assets/Particles/PNG (Transparent)/star_01.png" id="4_u5n3a"]
+
+[sub_resource type="TorusMesh" id="TorusMesh_21a3d"]
+inner_radius = 0.95
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_kfg5s"]
+resource_local_to_scene = true
+material = ExtResource("2_8qj4y")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_s1kly"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_otphp"]
+lifetime_randomness = 1.0
+emission_shape = 1
+emission_sphere_radius = 2.0
+orbit_velocity_min = 0.2
+orbit_velocity_max = 0.2
+gravity = Vector3(0, 9.8, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3vgk7"]
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.34902, 1, 1)
+albedo_texture = ExtResource("4_u5n3a")
+use_particle_trails = true
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_1by7b"]
+material = SubResource("StandardMaterial3D_3vgk7")
+size = 0.2
+
+[node name="Teleporter" type="Area3D"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+script = ExtResource("1_4sfp1")
+
+[node name="BorderMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.85, 0, 0, 0, 3, 0, 0, 0, 0.85, 0, 0.489862, 0)
+mesh = SubResource("TorusMesh_21a3d")
+
+[node name="TeleporterMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.56, 0)
+mesh = SubResource("PlaneMesh_kfg5s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05424, 0)
+shape = SubResource("BoxShape3D_s1kly")
+
+[node name="platform" parent="." instance=ExtResource("3_iscke")]
+
+[node name="CPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1.39858, 0)
+amount = 28
+lifetime = 0.5
+visibility_aabb = AABB(-2.35977, -1.95653, -1.99072, 4.71953, 3.91307, 3.98144)
+trail_enabled = true
+trail_lifetime = 0.1
+process_material = SubResource("ParticleProcessMaterial_otphp")
+draw_pass_1 = SubResource("RibbonTrailMesh_1by7b")
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, -3, 4.52987e-07, 0, -4.52987e-07, -3, 0, 0, 0)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

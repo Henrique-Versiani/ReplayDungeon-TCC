@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnrpfp11c3vhr"]
+
+[ext_resource type="Script" path="res://scenes/paths/Path.gd" id="1_xl2mr"]
+
+[sub_resource type="Curve3D" id="Curve3D_ao6r8"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[node name="HorizontalPath" type="Path3D"]
+curve = SubResource("Curve3D_ao6r8")
+script = ExtResource("1_xl2mr")
+loop_mode = 1
+
+[node name="PathFollow3D" type="PathFollow3D" parent="."]
+rotation_mode = 0
+loop = false
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true

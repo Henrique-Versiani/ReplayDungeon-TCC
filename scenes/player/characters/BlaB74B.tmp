@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://dhfa84iajqg5h"]
+
+[ext_resource type="Script" path="res://scenes/player/characters/Blaze.gd" id="1_q5je6"]
+[ext_resource type="PackedScene" uid="uid://xt2htgq1bb7k" path="res://blaze_flame_hability.tscn" id="2_5b81d"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_n06g4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qtbol"]
+
+[node name="Blaze" type="CharacterBody3D"]
+script = ExtResource("1_q5je6")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_n06g4")
+
+[node name="FlamesFury" type="Timer" parent="."]
+wait_time = 3.5
+one_shot = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_qtbol")
+
+[node name="FlameFury" parent="." instance=ExtResource("2_5b81d")]
+transform = Transform3D(1, 0, 0, 0, -0.0592367, -0.998244, 0, 0.998244, -0.0592367, 0, -0.155347, 1.14432)

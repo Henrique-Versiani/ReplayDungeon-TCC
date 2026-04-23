@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://8ypagdgicv8u"]
+
+[ext_resource type="Script" path="res://scenes/paths/Path.gd" id="1_jxswe"]
+
+[sub_resource type="Curve3D" id="Curve3D_ok4ut"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, -2),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[node name="RetangularPath" type="Path3D"]
+curve = SubResource("Curve3D_ok4ut")
+script = ExtResource("1_jxswe")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+rotation_mode = 0
+cubic_interp = false

@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://claqkoq3wigp0"]
+
+[ext_resource type="PackedScene" uid="uid://cfcybj0v41r4h" path="res://assets/Yu-Bo1/cute_robot.glb" id="1_iiryi"]
+[ext_resource type="Script" path="res://scenes/enemys/Yu-Bo1/Yu-Bo1.gd" id="1_mupvo"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8m3py"]
+size = Vector3(0.633179, 0.845764, 0.50174)
+
+[node name="Yu-bo1" type="CharacterBody3D"]
+script = ExtResource("1_mupvo")
+
+[node name="Collision" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00701904, 0.294959, 0.0666046)
+shape = SubResource("BoxShape3D_8m3py")
+
+[node name="Sketchfab_Scene" parent="." instance=ExtResource("1_iiryi")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="ActivationArea" type="Area3D" parent="."]
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ActivationArea"]
+
+[connection signal="body_entered" from="Collision" to="." method="_on_collision_body_entered"]
+[connection signal="body_entered" from="ActivationArea" to="." method="_on_activation_area_body_entered"]

@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://b554co41kjofo"]
+
+[ext_resource type="Script" path="res://scenes/enemys/bat/bat.gd" id="1_rmbx3"]
+[ext_resource type="PackedScene" uid="uid://ck6mfq8phfrcr" path="res://scenes/enemys/bat/bat_model.tscn" id="2_kw3w5"]
+[ext_resource type="PackedScene" uid="uid://bkm3x2lrnvo3v" path="res://scenes/paths/CirclePath.tscn" id="2_l2rji"]
+[ext_resource type="PackedScene" uid="uid://d4k5833k3mlir" path="res://scenes/components/speed.tscn" id="4_rxrt4"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7j5g7"]
+radius = 0.25
+
+[node name="BatCircle" type="CharacterBody3D"]
+script = ExtResource("1_rmbx3")
+
+[node name="CirclePath" parent="." instance=ExtResource("2_l2rji")]
+loop_mode = 1
+
+[node name="BatModel" parent="." instance=ExtResource("2_kw3w5")]
+transform = Transform3D(-1, 6.18173e-08, 6.18173e-08, 0, 0.707107, -0.707107, -8.74228e-08, -0.707107, -0.707107, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BatModel"]
+transform = Transform3D(1, -4.26326e-14, -4.26326e-14, 0, 1, 9.55341e-16, 0, 9.55341e-16, 1, 0, 0.370819, -0.259389)
+shape = SubResource("SphereShape3D_7j5g7")
+
+[node name="Speed" parent="." instance=ExtResource("4_rxrt4")]
+speed = 5.0
+
+[connection signal="body_entered" from="BatModel" to="." method="_on_bat_model_body_entered"]

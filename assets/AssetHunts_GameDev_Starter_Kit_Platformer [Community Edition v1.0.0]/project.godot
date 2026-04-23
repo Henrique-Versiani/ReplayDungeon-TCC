@@ -1,0 +1,60 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="AssetHunts - GameDev Starter Kit - Platformer [Community Edition v1.0.0]"
+config/description="⚪License
+For the license, Please visit
+www.assethunts.com/license
+
+⚪FAQ
+For Frequently Asked Questions, Please Explore
+www.assethunts.com/faq
+
+⚪Support
+For any issue or question, Please contact our support
+www.assethunts.com/contact
+
+⚪Social Links
+Follow us on other places across the web!
+https://linktr.ee/assethunts"
+config/version="v1.0.0"
+run/main_scene="res://AssetHunts - GameDev Starter Kit - Platfromer/Demo Scenes/Demo_Scene_01.tscn"
+config/features=PackedStringArray("4.2", "Forward Plus")
+boot_splash/bg_color=Color(0.129412, 0.14902, 0.180392, 1)
+boot_splash/image="res://AssetHunts - GameDev Starter Kit - Platfromer/Project Resources/v1.0.0.png"
+boot_splash/fullsize=false
+config/icon="res://AssetHunts - GameDev Starter Kit - Platfromer/Project Resources/v1.0.0.png"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+
+[file_customization]
+
+folder_colors={
+"res://AssetHunts - GameDev Starter Kit - Platfromer v1.0.0/": "purple",
+"res://AssetHunts - GameDev Starter Kit - Platfromer v1.0.0/3D Models/": "yellow",
+"res://AssetHunts - GameDev Starter Kit - Platfromer/": "purple",
+"res://AssetHunts - GameDev Starter Kit - Platfromer/3D Models/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/": "purple",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/3d Tiles/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Characters/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Collectables/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Fonts/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Obstacles/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Plants/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Props/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Rocks/": "yellow",
+"res://Godot GameDev Starter Kit v1.0.0/3D Models/Selection Pointer/": "yellow"
+}

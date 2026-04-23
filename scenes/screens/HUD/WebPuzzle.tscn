@@ -1,0 +1,59 @@
+[gd_scene load_steps=4 format=3 uid="uid://blaf0v283wuas"]
+
+[ext_resource type="Script" path="res://scenes/screens/HUD/WebPuzzle.gd" id="1_j7kny"]
+[ext_resource type="AudioStream" uid="uid://dgfmwn64sr8vc" path="res://assets/audio/hittrap.wav" id="2_uoi4w"]
+[ext_resource type="AudioStream" uid="uid://d0lbm6goebvya" path="res://assets/audio/misstrap.wav" id="3_k0it7"]
+
+[node name="WebPuzzle" type="CanvasLayer"]
+script = ExtResource("1_j7kny")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(4, 4)
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="Control" type="Control" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Patterns" type="HBoxContainer" parent="MarginContainer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -6.0
+offset_right = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.95, 0.95)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="FirstInput" type="TextureRect" parent="MarginContainer/Control/Patterns"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+expand_mode = 3
+stretch_mode = 3
+
+[node name="SecondInput" type="TextureRect" parent="MarginContainer/Control/Patterns"]
+layout_mode = 2
+expand_mode = 3
+stretch_mode = 3
+
+[node name="HitSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_uoi4w")
+volume_db = -10.0
+
+[node name="MissSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_k0it7")
+volume_db = -10.0

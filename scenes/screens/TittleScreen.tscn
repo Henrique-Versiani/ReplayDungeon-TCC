@@ -1,0 +1,143 @@
+[gd_scene load_steps=8 format=3 uid="uid://bkxvx38c2wjlq"]
+
+[ext_resource type="PackedScene" uid="uid://bt0i4gh11p7mr" path="res://scenes/screens/BaseScreen.tscn" id="1_qsl7o"]
+[ext_resource type="FontFile" uid="uid://blewj7hsnx66l" path="res://assets/DungeonFont.ttf" id="2_m13i2"]
+[ext_resource type="Texture2D" uid="uid://cah87tc0qnvfu" path="res://assets/Fantasy UI borders/PNG/Default/Panel/panel-001.png" id="3_j4fba"]
+[ext_resource type="Texture2D" uid="uid://chx308crwgwgy" path="res://assets/Fantasy UI borders/PNG/Default/Border/panel-border-001.png" id="3_vjdma"]
+[ext_resource type="Texture2D" uid="uid://0n5n3ljt26ep" path="res://assets/buttons/flat-dark/flatDark17.png" id="4_h4m74"]
+[ext_resource type="Texture2D" uid="uid://cl7423e37t6ke" path="res://assets/buttons/flat-dark/flatDark15.png" id="6_sd48n"]
+[ext_resource type="Texture2D" uid="uid://ohmxgorn2j3l" path="res://assets/buttons/flat-dark/flatDark16.png" id="7_u8dij"]
+
+[node name="BaseScreen" instance=ExtResource("1_qsl7o")]
+
+[node name="MarginContainer" parent="." index="0"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" parent="MarginContainer" index="0"]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 75
+
+[node name="Title" parent="MarginContainer/VBoxContainer" index="0"]
+theme_override_colors/font_color = Color(1, 0.682353, 0.258824, 1)
+theme_override_fonts/font = ExtResource("2_m13i2")
+theme_override_font_sizes/font_size = 108
+text = "Replay
+Dungeon
+"
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Title" index="0"]
+visible = false
+z_index = -1
+layout_mode = 1
+offset_left = -63.0
+offset_top = -32.0
+offset_right = 337.0
+offset_bottom = 168.0
+texture = ExtResource("3_j4fba")
+
+[node name="BACKGROUND-PLACEHOLDER" type="ColorRect" parent="MarginContainer/VBoxContainer/Title" index="1"]
+visible = false
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -15.0
+offset_top = -20.0
+offset_right = 6.0
+offset_bottom = 35.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0.682353, 0.258824, 1)
+
+[node name="BACKGROUND-TITTLE" type="TextureRect" parent="MarginContainer/VBoxContainer/Title" index="2"]
+visible = false
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shop" type="TextureButton" parent="MarginContainer/VBoxContainer/Buttons1" index="0" groups=["buttons"]]
+self_modulate = Color(1, 0.682353, 0.258824, 1)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture_normal = ExtResource("4_h4m74")
+stretch_mode = 5
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Buttons1/Shop" index="0"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_vjdma")
+
+[node name="Play" type="TextureButton" parent="MarginContainer/VBoxContainer/Buttons1" index="1" groups=["buttons"]]
+self_modulate = Color(1, 0.682353, 0.258824, 1)
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+texture_normal = ExtResource("6_sd48n")
+stretch_mode = 5
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Buttons1/Play" index="0"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -39.0
+offset_top = -39.0
+offset_right = 39.0
+offset_bottom = 39.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_vjdma")
+
+[node name="Settings" type="TextureButton" parent="MarginContainer/VBoxContainer/Buttons1" index="2" groups=["buttons"]]
+self_modulate = Color(1, 0.682353, 0.258824, 1)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture_normal = ExtResource("7_u8dij")
+stretch_mode = 5
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Buttons1/Settings" index="0"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_vjdma")

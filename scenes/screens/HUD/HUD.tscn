@@ -1,0 +1,279 @@
+[gd_scene load_steps=18 format=3 uid="uid://dc41dh1mtw5nq"]
+
+[ext_resource type="Script" path="res://scenes/screens/HUD/HUD.gd" id="1_yabjk"]
+[ext_resource type="Texture2D" uid="uid://dx1ilssvhi5cq" path="res://assets/buttons/flat-dark/flatDark13.png" id="2_n7ur6"]
+[ext_resource type="FontFile" uid="uid://bcgiw5u556dk7" path="res://assets/fonts/m6x11.ttf" id="3_jvwyo"]
+[ext_resource type="Texture2D" uid="uid://chx308crwgwgy" path="res://assets/Fantasy UI borders/PNG/Default/Border/panel-border-001.png" id="3_o34jf"]
+[ext_resource type="Texture2D" uid="uid://ncucy3lkkhw8" path="res://assets/Icons_Essential/v1.2/Icons/Coin.png" id="4_icrht"]
+[ext_resource type="Shader" path="res://scenes/screens/HUD/abilityloader.gdshader" id="5_552t4"]
+[ext_resource type="Texture2D" uid="uid://r1a1v1w111t4" path="res://assets/buttons/flat-dark/flatDark27.png" id="5_y43ed"]
+[ext_resource type="Texture2D" uid="uid://i71dpdaka8qf" path="res://assets/arrow-up_white_4x.png" id="6_jka1v"]
+[ext_resource type="Texture2D" uid="uid://b37bvdyaddf81" path="res://assets/arrow-up_black_4x.png" id="7_kghrv"]
+[ext_resource type="Script" path="res://scenes/screens/HUD/PowerPercentage.gd" id="8_g2o5d"]
+[ext_resource type="Texture2D" uid="uid://dpsqryhy70gpb" path="res://assets/arrow-down_white_4x.png" id="8_wypc5"]
+[ext_resource type="Texture2D" uid="uid://3ec24yjggbwk" path="res://assets/arrow-down_black_4x.png" id="9_pa0p4"]
+[ext_resource type="Texture2D" uid="uid://c78yahbhjeubp" path="res://assets/arrow-left_white_4x.png" id="10_826b1"]
+[ext_resource type="Texture2D" uid="uid://dejkxe24wn4t7" path="res://assets/arrow-left_black_4x.png" id="11_1aisg"]
+[ext_resource type="Texture2D" uid="uid://ceimrrryet816" path="res://assets/arrow-right_white_4x.png" id="12_b7o7l"]
+[ext_resource type="Texture2D" uid="uid://chij727ty4rpv" path="res://assets/arrow-right_black_4x.png" id="13_p4cyn"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3flr7"]
+resource_local_to_scene = true
+shader = ExtResource("5_552t4")
+shader_parameter/primary_color = Color(1, 1, 1, 1)
+shader_parameter/outline_color = Color(0, 0, 0, 1)
+shader_parameter/unfilled_color = Color(0.443, 0.443, 0.443, 1)
+shader_parameter/value = 0.0
+shader_parameter/smooth_ = 0.005
+shader_parameter/width_in = 0.85
+shader_parameter/width_out = 0.95
+shader_parameter/border_width = 0.03
+
+[node name="HUD" type="CanvasLayer"]
+layer = 0
+follow_viewport_enabled = true
+script = ExtResource("1_yabjk")
+
+[node name="MarginContainerPause" type="MarginContainer" parent="."]
+offset_right = 79.0
+offset_bottom = 89.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Pause" type="TextureButton" parent="MarginContainerPause" groups=["buttons"]]
+self_modulate = Color(1, 0.682353, 0.258824, 1)
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("2_n7ur6")
+stretch_mode = 4
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainerPause/Pause"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -24.0
+offset_right = 24.0
+offset_bottom = 48.0
+grow_horizontal = 2
+texture = ExtResource("3_o34jf")
+
+[node name="MarginContainerDistance" type="MarginContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -68.0
+offset_right = 60.0
+offset_bottom = 64.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 72
+
+[node name="Control" type="Control" parent="MarginContainerDistance"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Distance" type="Label" parent="MarginContainerDistance/Control"]
+layout_mode = 2
+offset_right = 32.0
+offset_bottom = 28.0
+theme_override_fonts/font = ExtResource("3_jvwyo")
+theme_override_font_sizes/font_size = 32
+text = "	0m"
+
+[node name="HighScore" type="Label" parent="MarginContainerDistance/Control"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = 27.0
+offset_right = 47.0
+offset_bottom = 44.0
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.682353, 0.258824, 1)
+theme_override_fonts/font = ExtResource("3_jvwyo")
+theme_override_font_sizes/font_size = 18
+text = "Best: 0M"
+horizontal_alignment = 3
+
+[node name="MarginContainerCoin" type="MarginContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -128.0
+offset_bottom = 64.0
+grow_horizontal = 0
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 72
+
+[node name="Control" type="Control" parent="MarginContainerCoin"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Plus" type="Label" parent="MarginContainerCoin/Control"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -2.0
+offset_right = 4.0
+offset_bottom = 26.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.682353, 0.258824, 1)
+theme_override_fonts/font = ExtResource("3_jvwyo")
+theme_override_font_sizes/font_size = 32
+text = "+"
+justification_flags = 161
+
+[node name="Coins" type="Label" parent="MarginContainerCoin/Control/Plus"]
+layout_mode = 2
+offset_left = 20.0
+offset_top = 1.0
+offset_right = 44.0
+offset_bottom = 29.0
+theme_override_colors/font_color = Color(1, 0.682353, 0.258824, 1)
+theme_override_fonts/font = ExtResource("3_jvwyo")
+theme_override_font_sizes/font_size = 32
+text = "0"
+justification_flags = 161
+
+[node name="Sprite2D" type="Sprite2D" parent="MarginContainerCoin/Control/Plus"]
+position = Vector2(-11, 13)
+scale = Vector2(1.75, 1.75)
+texture = ExtResource("4_icrht")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 350.0
+offset_top = 73.0
+offset_right = -50.0
+offset_bottom = 153.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="Power" type="TouchScreenButton" parent="MarginContainer"]
+self_modulate = Color(1, 0.682353, 0.258824, 1)
+position = Vector2(0, -20)
+texture_normal = ExtResource("5_y43ed")
+
+[node name="PowerPercentage" type="ColorRect" parent="MarginContainer/Power"]
+material = SubResource("ShaderMaterial_3flr7")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_g2o5d")
+
+[node name="MarginContainerButtons" type="MarginContainer" parent="."]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -310.0
+offset_top = -427.0
+offset_right = -17.0
+offset_bottom = 427.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_top = 674
+theme_override_constants/margin_right = 230
+theme_override_constants/margin_bottom = 180
+
+[node name="ControlButtons" type="Control" parent="MarginContainerButtons"]
+layout_direction = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+mouse_filter = 2
+
+[node name="Up" type="TouchScreenButton" parent="MarginContainerButtons/ControlButtons"]
+position = Vector2(0, -75)
+scale = Vector2(0.35, 0.35)
+texture_normal = ExtResource("6_jka1v")
+texture_pressed = ExtResource("7_kghrv")
+passby_press = true
+action = "up"
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainerButtons/ControlButtons/Up"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_o34jf")
+
+[node name="Down" type="TouchScreenButton" parent="MarginContainerButtons/ControlButtons"]
+position = Vector2(0, 75)
+scale = Vector2(0.35, 0.35)
+texture_normal = ExtResource("8_wypc5")
+texture_pressed = ExtResource("9_pa0p4")
+action = "down"
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainerButtons/ControlButtons/Down"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_o34jf")
+
+[node name="Left" type="TouchScreenButton" parent="MarginContainerButtons/ControlButtons"]
+position = Vector2(-150, 0)
+scale = Vector2(0.35, 0.35)
+texture_normal = ExtResource("10_826b1")
+texture_pressed = ExtResource("11_1aisg")
+action = "left"
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainerButtons/ControlButtons/Left"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_o34jf")
+
+[node name="Right" type="TouchScreenButton" parent="MarginContainerButtons/ControlButtons"]
+position = Vector2(150, 0)
+scale = Vector2(0.35, 0.35)
+texture_normal = ExtResource("12_b7o7l")
+texture_pressed = ExtResource("13_p4cyn")
+action = "right"
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainerButtons/ControlButtons/Right"]
+modulate = Color(1, 0.682353, 0.258824, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_o34jf")
+
+[connection signal="pressed" from="MarginContainer/Power" to="." method="_on_power_pressed"]

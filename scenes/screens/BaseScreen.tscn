@@ -1,0 +1,34 @@
+[gd_scene load_steps=3 format=3 uid="uid://bt0i4gh11p7mr"]
+
+[ext_resource type="Script" path="res://scenes/screens/BaseScreen.gd" id="1_lm412"]
+[ext_resource type="FontFile" uid="uid://bcgiw5u556dk7" path="res://assets/fonts/m6x11.ttf" id="2_igaam"]
+
+[node name="BaseScreen" type="CanvasLayer"]
+script = ExtResource("1_lm412")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 480.0
+offset_bottom = 854.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 150
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_igaam")
+theme_override_font_sizes/font_size = 54
+text = "PLACEHOLDER
+"
+horizontal_alignment = 1
+
+[node name="Buttons1" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="Buttons2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1

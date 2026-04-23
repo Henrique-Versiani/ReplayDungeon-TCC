@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://bp71ruyjt0p2t"]
+
+[ext_resource type="Script" path="res://scenes/enemys/esquentadinho/esquentadinho.gd" id="1_p41w0"]
+[ext_resource type="PackedScene" uid="uid://bkm3x2lrnvo3v" path="res://scenes/paths/CirclePath.tscn" id="2_ov0yl"]
+[ext_resource type="PackedScene" uid="uid://dt5gqoba1cle3" path="res://scenes/enemys/esquentadinho/EsquentadinhoModel.tscn" id="3_qf4kf"]
+[ext_resource type="PackedScene" uid="uid://d4k5833k3mlir" path="res://scenes/components/speed.tscn" id="4_hs7qh"]
+
+[node name="EsquentadinhoCircle" type="CharacterBody3D"]
+script = ExtResource("1_p41w0")
+
+[node name="CirclePath" parent="." instance=ExtResource("2_ov0yl")]
+
+[node name="EsquentadinhoModel" parent="." instance=ExtResource("3_qf4kf")]
+
+[node name="Speed" parent="." instance=ExtResource("4_hs7qh")]
+speed = 8.0
+
+[connection signal="body_entered" from="EsquentadinhoModel" to="." method="_on_esquentadinho_model_body_entered"]

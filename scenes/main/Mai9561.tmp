@@ -1,0 +1,108 @@
+[gd_scene load_steps=16 format=3 uid="uid://cb3mdlwl6ofcd"]
+
+[ext_resource type="Script" path="res://scenes/main/Main.gd" id="1_rh0y3"]
+[ext_resource type="MeshLibrary" uid="uid://l7rwvq36l45t" path="res://mesh library/MeshLibrary1.tres" id="2_b5eex"]
+[ext_resource type="Script" path="res://scenes/maps/GridMapManager.gd" id="3_dhxpc"]
+[ext_resource type="Texture2D" uid="uid://d1x6pepgwuwni" path="res://assets/icon.svg" id="3_gubtd"]
+[ext_resource type="PackedScene" uid="uid://cxf0vsexdgqe8" path="res://scenes/screens/ScreensManager.tscn" id="3_wkk06"]
+[ext_resource type="PackedScene" uid="uid://b0trehguqisut" path="res://scenes/player/Player.tscn" id="4_tmfgm"]
+[ext_resource type="PackedScene" uid="uid://3jy3bw6e32my" path="res://scenes/player/characters/Robot.tscn" id="5_aeylb"]
+[ext_resource type="Script" path="res://scenes/player/characters/Character.gd" id="6_yoio1"]
+[ext_resource type="Script" path="res://scenes/main/camera/CameraMovement.gd" id="7_sf2yc"]
+[ext_resource type="PackedScene" uid="uid://dc41dh1mtw5nq" path="res://scenes/screens/HUD/HUD.tscn" id="8_kb84f"]
+[ext_resource type="Shader" path="res://shaders/Pixel.gdshader" id="8_vd43d"]
+[ext_resource type="PackedScene" uid="uid://mbch2hpfi3vr" path="res://scenes/enemys/ghost/ghost.tscn" id="12_68xxd"]
+
+[sub_resource type="Environment" id="Environment_mu2mr"]
+background_mode = 1
+background_energy_multiplier = 0.2
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.2
+reflected_light_source = 1
+tonemap_mode = 1
+tonemap_exposure = 0.7
+tonemap_white = 10.0
+glow_enabled = true
+glow_normalized = true
+glow_strength = 0.8
+glow_bloom = 0.2
+adjustment_enabled = true
+adjustment_saturation = 2.0
+
+[sub_resource type="Resource" id="Resource_8i41c"]
+script = ExtResource("6_yoio1")
+name = "Robot"
+scene = ExtResource("5_aeylb")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yjitu"]
+shader = ExtResource("8_vd43d")
+shader_parameter/pixelate = 256.0
+
+[node name="Main" type="Node"]
+script = ExtResource("1_rh0y3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_mu2mr")
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("2_b5eex")
+cell_size = Vector3(1, 1, 1)
+cell_center_y = false
+cell_scale = 0.5
+script = ExtResource("3_dhxpc")
+
+[node name="Player" parent="." instance=ExtResource("4_tmfgm")]
+disable_mode = 0
+character = SubResource("Resource_8i41c")
+
+[node name="CameraOrtogonal" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866026, 0, -0.866026, 0.5, 22.5, 8.5, 0)
+projection = 1
+current = true
+fov = 95.0
+size = 15.0
+frustum_offset = Vector2(0, 0.125)
+script = ExtResource("7_sf2yc")
+
+[node name="ScreensManager" parent="." instance=ExtResource("3_wkk06")]
+
+[node name="HUD" parent="." instance=ExtResource("8_kb84f")]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+light_mask = 0
+material = SubResource("ShaderMaterial_yjitu")
+position = Vector2(242.5, 426)
+scale = Vector2(3.78906, 6.76562)
+texture = ExtResource("3_gubtd")
+
+[node name="ghost" parent="." instance=ExtResource("12_68xxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 0, 3.5)
+
+[node name="ghost2" parent="." instance=ExtResource("12_68xxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0.5, 3)
+visible = false
+
+[node name="ghost3" parent="." instance=ExtResource("12_68xxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0.5, 3)
+visible = false
+
+[node name="ghost4" parent="." instance=ExtResource("12_68xxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5819, 0, 2.62048)
+visible = false
+
+[node name="ghost5" parent="." instance=ExtResource("12_68xxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.3181, 0, 2.43069)
+visible = false
+
+[node name="ghost6" parent="." instance=ExtResource("12_68xxd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.3834, 0, 2.61477)
+visible = false
+
+[connection signal="coin_collected" from="Player" to="HUD" method="_on_player_coin_collected"]
+[connection signal="player_moved" from="Player" to="CameraOrtogonal" method="_on_player_player_moved"]
+[connection signal="update_distance" from="Player" to="HUD" method="_on_player_update_distance"]
+[connection signal="update_highscore" from="Player" to="HUD" method="_on_player_update_highscore"]
+[connection signal="game_started" from="ScreensManager" to="Player" method="_on_screens_manager_game_started"]

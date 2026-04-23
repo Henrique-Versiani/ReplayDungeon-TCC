@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Character" load_steps=3 format=3 uid="uid://cc5g8tm4fyovj"]
+
+[ext_resource type="PackedScene" uid="uid://3jy3bw6e32my" path="res://scenes/player/characters/Robot/Robot.tscn" id="1_qf3je"]
+[ext_resource type="Script" path="res://scenes/player/characters/Character.gd" id="2_76brb"]
+
+[resource]
+script = ExtResource("2_76brb")
+name = "Robot"
+scene = ExtResource("1_qf3je")
