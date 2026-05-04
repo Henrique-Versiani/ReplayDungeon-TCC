@@ -189,6 +189,7 @@ script = ExtResource("1_a8p2o")
 [node name="trap" type="Node3D" parent="."]
 
 [node name="trap2" type="MeshInstance3D" parent="trap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7, 0)
 mesh = SubResource("ArrayMesh_667kx")
 skeleton = NodePath("")
 
@@ -199,6 +200,7 @@ skeleton = NodePath("")
 
 [node name="Platform" type="MeshInstance3D" parent="trap/trap2"]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, -0.0965216, 0)
+visible = false
 mesh = SubResource("ArrayMesh_o7ydn")
 skeleton = NodePath("")
 
@@ -213,15 +215,16 @@ parameters/Idle/blend_position = Vector2(0, 0)
 parameters/Show/blend_position = Vector2(0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.729711, 0, 0, 0, 0.50992, 0, 0, 0, 0.728231, 0, 0.282087, 0)
+transform = Transform3D(0.729711, 0, 0, 0, 0.50992, 0, 0, 0, 0.728231, 0, -0.518, 0)
 shape = SubResource("BoxShape3D_16cwx")
 
 [node name="RayCast3D" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 10, 0, 0, 0, 1, 0, -0.115654, 0)
+transform = Transform3D(1, 0, 0, 0, 10, 0, 0, 0, 1, 0, -0.816, 0)
 target_position = Vector3(0, 1, 0)
 hit_from_inside = true
 
 [node name="SpikeActiveSFX" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7, 0)
 stream = ExtResource("3_dbgv2")
 volume_db = -10.0
 max_db = 0.0

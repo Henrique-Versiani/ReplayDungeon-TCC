@@ -23,6 +23,7 @@ extends GridMap
 @onready var fire_shooter_scene 		= preload("res://scenes/traps/shooter/FireShooter.tscn")
 @onready var one_fire_shooter_scene 	= preload("res://scenes/traps/shooter/OneFireShooter.tscn")
 @onready var one_slime_shooter_scene 	= preload("res://scenes/traps/Slime/OneSlimeShooter.tscn")
+@onready var chunk_generator_script 	= preload("res://scenes/ProceduralLevelGenerator/ChunkGenerator.gd")
 
 const PLATFORM_FALLING_MESH:int = 0
 const COIN_MESH:int				= 2
@@ -62,12 +63,65 @@ var HARD:			bool = false
 var level:          int = 0
 var map_index:		int = 0
 var previous_map:	int = 0
+var chunk_generator
+var procedural_last_exit_x: int = 22
+
+@export var use_procedural_generation: bool = true
+@export var procedural_seed: int = 51257
+@export var procedural_chunk_width: int = 10
+@export var procedural_chunk_depth: int = 20
+@export var procedural_floor_y: int = 0
+@export var procedural_floor_mesh: int = 1
+@export_range(0.0, 1.0, 0.01) var procedural_coin_chance: float = 0.20
 
 func GenerateMap(map_name: String = ""):
+	if use_procedural_generation:
+		CreateProceduralChunk()
+		return
+
 	if map_name == "":
 		CreateMap(GetGridValues(ChooseRandomMap()))
 	else:
 		CreateMap(GetGridValues(map_name))
+
+func CreateProceduralChunk() -> void:
+	if chunk_generator == null:
+		chunk_generator = chunk_generator_script.new()
+
+	var chunk_start_z: int = 0
+	if maps_data_list.size() > 0:
+		chunk_start_z = -(global_max_z + 1)
+
+	var chunk_data: Dictionary = chunk_generator.generate_chunk(
+		count,
+		procedural_seed,
+		procedural_last_exit_x,
+		chunk_start_z,
+		procedural_chunk_width,
+		procedural_chunk_depth,
+		procedural_floor_y,
+		procedural_floor_mesh,
+		COIN_MESH,
+		procedural_coin_chance
+	)
+
+	procedural_last_exit_x = chunk_data["exit_x"]
+
+	var cell_data_list: Dictionary = {"cells": {}}
+	for cell_data in chunk_data["cells"]:
+		var cell: Vector3i = cell_data["cell"]
+		var mesh: int = cell_data["mesh"]
+		var orientation: int = cell_data["orientation"]
+		cell_data_list["cells"][GetPositionAsString(cell)] = [cell, mesh, orientation]
+
+	maps_data_list.append({
+		"map_id": count,
+		"map_name": "ProceduralChunk_" + str(count),
+		"cell_data": cell_data_list,
+		"map_instance": null
+	})
+	count += 1
+	CreateMap(maps_data_list)
 
 	
 func CreateMapsNamesList() -> void:
@@ -107,11 +161,11 @@ func GetGridValues(map_name) -> Array:
 	count += 1
 	map_instance.queue_free()
 	return maps_data_list
-func GetPositionAsString(position):
-	if position is Vector3 or position is Vector3i:
-		return str(position.x)+""+str(position.y)+""+str(position.z)
+func GetPositionAsString(pos):
+	if pos is Vector3 or pos is Vector3i:
+		return str(pos.x)+""+str(pos.y)+""+str(pos.z)
 	else:
-		return str(position.x)+""+str(0)+""+str(position.y)
+		return str(pos.x)+""+str(0)+""+str(pos.y)
 		
 
 func GetCellOrientation(_coords, _map) -> Array:
@@ -163,8 +217,8 @@ func CreateMap(map_value) -> void:
 	"""
 
 	var map_id = map_value[count-1]["map_id"]
-	var map_name = map_value[count-1]["map_name"]
-	var section = GetMapInstanceById(map_id)
+	var _map_name = map_value[count-1]["map_name"]
+	var _section = GetMapInstanceById(map_id)
 	
 	#if map_name == "Sectiwwon_16" or map_name == "Section_17": teleport_final = section.GetTeleporterPosition(global_max_z)
 	
@@ -189,10 +243,8 @@ func CreateMap(map_value) -> void:
 			TELEPORTER_MESH:
 				InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh)
 				gridmap.set_cell_item(Vector3(cell.x, cell.y, cell.z  ), mesh, orientation)
-			SPIKE_MESH:
-				InstantiateObject(cell.x + 0.5, cell.y + 0.2, cell.z  + 0.5, mesh)
-				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z  ), mesh, orientation)
-				
+
+			SPIKE_MESH:			  InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh)	
 			COIN_MESH: 			  InstantiateObject(cell.x + 0.5, cell.y - 0.2, cell.z + 0.5, mesh)
 			SAW_MESH: 			  InstantiateObject(cell.x + 0.5, cell.y -0.75, cell.z  + 0.5, mesh)
 			SPINNER_DOUBLE_MESH:  InstantiateObject(cell.x + 0.5, cell.y -0.75, cell.z  + 0.5, mesh)
@@ -244,33 +296,6 @@ func FindMeshIndex(mesh) -> int:
 	RETORNA O INDEX DA MESH
 	"""
 	return mesh_library.find_item_by_name(mesh)
-	"""
-func ChooseRandomMap() -> String:
-	
-	#RETORNA O NOME DE UM MAPA ALEATÓRIO CONFORME O PESO E EVITA REPETIÇÕES CONSECUTIVAS
-
-	var weights = [15, 8, level - 1]
-	
-	var map_index = rand_weighted(weights)
-	while map_index == previous_map:
-		map_index = rand_weighted(weights)
-	
-	previous_map = map_index
-	return String(maps_names[map_index])
-
-static func rand_weighted(weights: Array) -> int:
-	var sum = 0
-	for weight in weights:
-		sum += weight
-	
-	var num = randf_range(0, sum)
-	
-	for i in range(weights.size()):
-		if num < weights[i]:
-			return i
-		num -= weights[i]
-	return 0
-	"""
 func ChooseRandomMap():
 	"""
 	RETORNA O NOME DE UM MAPA ALEATORIO | EXISTE ESPACO PARA MELHORIA, COMO POR EXEMPLO MAPAS MAIS DIFICEIS CONFORME O JOGADOR AVANCA PELO MAPA.
@@ -334,7 +359,7 @@ func ChooseRandomMap():
 		return String(maps_names[map_index + 1])
 	#return String(maps_names[randi() % (len(maps_names) - 2) + 2])
 
-func verify(n):
+func verify(_n):
 	if level == 2:
 		EASY = false
 		MID = true
@@ -370,10 +395,8 @@ func CheckNextPlayerPosition(_position) -> Array:
 	#cell(22, 0, -2)
 	
 func CheckNextPosition(target_position):
-	var position_string: String = GetPositionAsString(floor(target_position))
 	var cell_found: bool = false
 	for i in range(len(maps_data_list)):
-		var cells = maps_data_list[i]["cell_data"]["cells"]
 		if GetPositionAsString(floor(target_position)) in maps_data_list[i]["cell_data"]["cells"]:
 			
 			cell_found = true
@@ -501,11 +524,11 @@ func UpdateObjectInstancePositionOnMapData(old_pos, new_pos):
 		if obj["instance"] == obj_instance:
 			obj["position"] = new_pos
 			return
-func GetCellByPositionString(position:String):
-	return maps_data_list[count]["cell_data"]["cells"][position]
+func GetCellByPositionString(position_key:String):
+	return maps_data_list[count]["cell_data"]["cells"][position_key]
 	
-func GetCellByMapIdAndPositionString(position:String, mapid: int):
-	return maps_data_list[mapid]["cell_data"]["cells"][position]
+func GetCellByMapIdAndPositionString(position_key:String, mapid: int):
+	return maps_data_list[mapid]["cell_data"]["cells"][position_key]
 
 func ResetMap():
 	for object in objects_instances:
@@ -518,14 +541,19 @@ func ResetMap():
 	teleport_final = []
 	count = 0
 	maps_data_list = []
+	procedural_last_exit_x = 23
+	chunk_generator = null
 
 func Init():
 	level = 0
 	EASY = true
 	MID = false
 	HARD = false
-	CreateMapsNamesList()
-	GenerateMap("Base")
+	if use_procedural_generation:
+		GenerateMap()
+	else:
+		CreateMapsNamesList()
+		GenerateMap("Base")
 	#for i in range(0,4):
 	#	GenerateMap()
 
