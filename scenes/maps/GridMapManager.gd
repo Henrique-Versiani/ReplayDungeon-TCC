@@ -23,6 +23,7 @@ extends GridMap
 @onready var fire_shooter_scene 		= preload("res://scenes/traps/shooter/FireShooter.tscn")
 @onready var one_fire_shooter_scene 	= preload("res://scenes/traps/shooter/OneFireShooter.tscn")
 @onready var one_slime_shooter_scene 	= preload("res://scenes/traps/Slime/OneSlimeShooter.tscn")
+@onready var section_selector: SectionSelector = SectionSelector.new()
 
 const PLATFORM_FALLING_MESH:int = 0
 const COIN_MESH:int				= 2
@@ -273,66 +274,18 @@ static func rand_weighted(weights: Array) -> int:
 	"""
 func ChooseRandomMap():
 	"""
-	RETORNA O NOME DE UM MAPA ALEATORIO | EXISTE ESPACO PARA MELHORIA, COMO POR EXEMPLO MAPAS MAIS DIFICEIS CONFORME O JOGADOR AVANCA PELO MAPA.
-	ALGO COMO UM PESO PARA CADA MAPA NA DECISAO DE QUAL SERA O PROXIMO MAPA GERADO
-	
-	var enum {EASY, MEDIUM, HARD}
-	
-	EASY = PESO 15
-	MEDIUM = PESO 8
-	HARD = LEVEL - 1 -> LEVEL 0 PESO 0, CONFORME AVANCA NO MAPA O LEVEL AUMENTA E O PESO TAMBEM
-	
-	rand_weighted([15, 8, level - 1])
-	static func rand_weighted(weights):
-	var sum = 0
-	for weight in weights:
-		sum += weight
-		FAZ A SOMA DO PESO QUANDO CHAMA O MAPA, EXEMPLO:
-			LEVEL 3:
-				SOMA = 15 + 8 + (3-1) = 25
-				
-	var num = randf_range(0,sum)
-		PEGA UM NUMERO ENTRE 0 E 25
-		
-	for i in weights.size():
-		if num < weights[i]:
-			return i
-			
-			EXEMPLO NUM = 9, RETORNA MAPA NIVEL FACIL PARA O MAPA
-			
-			EXEMPLO NUM 16, É MAIOR QUE 15 ENTÃO VAI PARA O PROXIMO PESO DA LISTA ( 8 )
-			16 - 15 = 1
-			1 É MENOR QUE 8, RETRONA MAPA NIVEL MEDIO
-			
-			EXEMPLO 24, É MAIOR QUE 15 ENTÃO VAI PARA O PROXIMO PESO ( 8 )
-			24 - 15 = 9
-			10 É MAIOR QUE O SEGUNDO PESO, ENTAO VAI PARA O PROXIMO PESO DA LISTA (LEVEL - 1 = 2)
-			9 - 8
-			1 É MENOR QUE O TERCEIRO PESO, RETORNA MAPA NIVEL HARD
-		num -= weights[i]
-	
+	VERSAO DE TESTE: SO USA AS SECOES QUE FORAM REGISTRADAS NO SELETOR
 	"""
 	verify(level)
-	
-	if EASY == true:
-		level += 1
-		while map_index == previous_map:
-			map_index = randi_range(1, 20)
-		previous_map = map_index
-		return String(maps_names[map_index + 1])
-	if MID == true:
-		level += 1
-		while map_index == previous_map:
-			map_index = randi_range(21, 44)
-		previous_map = map_index
-		return String(maps_names[map_index + 1])
-	if HARD == true:
-		level += 1
-		while map_index == previous_map:
-			map_index = randi_range(45, 64)
-		previous_map = map_index
-		return String(maps_names[map_index + 1])
-	#return String(maps_names[randi() % (len(maps_names) - 2) + 2])
+	level += 1
+
+	var available: Array = section_selector.section_categories.keys()
+ 
+	var chosen: String = section_selector.choose_next_section(available)
+ 
+	print(section_selector.debug_state(), "  ->  ", chosen)
+ 
+	return chosen
 
 func verify(n):
 	if level == 2:
@@ -525,9 +478,22 @@ func Init():
 	MID = false
 	HARD = false
 	CreateMapsNamesList()
+ 
+	add_child(section_selector)
+	section_selector.reset()
+ 
+	section_selector.register_sections_bulk({
+		"Section_38":  "risco",
+		"Section_21":  "rush",
+		"Section_9": "escolha",
+		"Section_1": "atraso",
+		"Section_60": "bifurcacao",
+		"Section_3": "recompensa",
+		"Section_8": "transicao",
+		"Section_22": "transicao",
+	})
+ 
 	GenerateMap("Base")
-	#for i in range(0,4):
-	#	GenerateMap()
 
 func RemoveDistantMap():
 	var oldest_map = maps_data_list[0]
