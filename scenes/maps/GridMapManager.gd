@@ -23,6 +23,8 @@ extends GridMap
 @onready var fire_shooter_scene 		= preload("res://scenes/traps/shooter/FireShooter.tscn")
 @onready var one_fire_shooter_scene 	= preload("res://scenes/traps/shooter/OneFireShooter.tscn")
 @onready var one_slime_shooter_scene 	= preload("res://scenes/traps/Slime/OneSlimeShooter.tscn")
+@onready var section_factory_script = preload("res://scenes/ProceduralLevelGenerator/SectionFactory.gd")
+
 @onready var section_selector: SectionSelector = SectionSelector.new()
 
 const PLATFORM_FALLING_MESH:int = 0
@@ -56,21 +58,66 @@ var maps_names:Array 			= []
 var maps_data_list:Array 		= []
 var objects_instances:Array 	= []
 var count: 			int = 0
+var next_chunk_id: int = 0
 var global_max_z: 	int = 0
-var EASY:			bool = true
-var MID:			bool = false
-var HARD:			bool = false
 var level:          int = 0
-var map_index:		int = 0
-var previous_map:	int = 0
+
+# ----- VARIAVEIS DO PIPELINE PROCEDURAL -----
+var section_factory
+var procedural_last_exit_x: int = 22
+
+@export var procedural_seed: int = 51257
+@export var procedural_floor_y: int = 0
+@export var procedural_floor_mesh: int = 1
 
 func GenerateMap(map_name: String = ""):
 	if map_name == "":
-		CreateMap(GetGridValues(ChooseRandomMap()))
+		CreateProceduralChunk()
 	else:
 		CreateMap(GetGridValues(map_name))
 
-	
+
+func CreateProceduralChunk() -> void:
+	var section_type: String = section_selector.choose_and_register_category()
+	var chunk_start_z: int = 0
+	if maps_data_list.size() > 0:
+		chunk_start_z = -(global_max_z + 1)
+
+	var section_data: Dictionary = section_factory.build_section(
+		section_type,
+		procedural_last_exit_x,
+		chunk_start_z,
+		procedural_seed,
+		next_chunk_id,
+		procedural_floor_y,
+		procedural_floor_mesh
+	)
+
+	procedural_last_exit_x = section_data["exit_x"]
+
+	print("section #%d  type=%s  depth=%d  exit_x=%d  |  %s" % [
+		count, section_data["type"], section_data["depth"], section_data["exit_x"],
+		section_selector.debug_state()
+	])
+
+	var cell_data_list: Dictionary = {"cells": {}}
+	for cell_data in section_data["cells"]:
+		var cell: Vector3i = cell_data["cell"]
+		var mesh: int = cell_data["mesh"]
+		var orientation: int = cell_data["orientation"]
+		cell_data_list["cells"][GetPositionAsString(cell)] = [cell, mesh, orientation]
+
+	maps_data_list.append({
+		"map_id": count,
+		"map_name": "ProceduralSection_" + str(count) + "_" + section_type,
+		"cell_data": cell_data_list,
+		"map_instance": null
+	})
+	count += 1
+	next_chunk_id += 1
+	CreateMap(maps_data_list)
+
+		
 func CreateMapsNamesList() -> void:
 	"""
 	GERA UMA LISTA COM O NOME DE TODOS OS MAPAS
@@ -91,15 +138,6 @@ func GetGridValues(map_name) -> Array:
 	var mesh_list = GetMeshIndex(map.get_meshes())
 	var cell_data_list:Dictionary = {"cells" : {}}
 	var cell_position = ""
-	"""
-	print("Map:" + str(map.name))
-	for i in range (cells_coord_list.size()):
-		print("coordinates: " + str(cells_coord_list[i]) + " orientation: " + str(cells_orientation[i]) + " mesh: " + str(mesh_list[i]))
-
-	OBS: tudo isso aqui so funciona por que a godot faz a varredura do grid sempre da mesma forma, 
-		 entao se eu pegar uma mesh ou uma celula, ela sempre vai pegar do mesmo jeito, 
-		 ou seja, o primeiro indice de qualquer um dos Gets vai representar a mesma coisa no grid
-	"""
 	for i in range(min(cells_coord_list.size(), mesh_list.size(), cells_orientation.size())):
 		cells_coord_list[i].z -= global_max_z
 		cell_position = GetPositionAsString(cells_coord_list[i])
@@ -108,6 +146,7 @@ func GetGridValues(map_name) -> Array:
 	count += 1
 	map_instance.queue_free()
 	return maps_data_list
+
 func GetPositionAsString(position):
 	if position is Vector3 or position is Vector3i:
 		return str(position.x)+""+str(position.y)+""+str(position.z)
@@ -167,8 +206,6 @@ func CreateMap(map_value) -> void:
 	var map_name = map_value[count-1]["map_name"]
 	var section = GetMapInstanceById(map_id)
 	
-	#if map_name == "Sectiwwon_16" or map_name == "Section_17": teleport_final = section.GetTeleporterPosition(global_max_z)
-	
 	var cells_position_list = map_value[count-1]["cell_data"]["cells"].keys()
 	
 	for i in range(0, len(cells_position_list)):
@@ -212,8 +249,6 @@ func CreateMap(map_value) -> void:
 			_:
 				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z ), mesh, orientation)
 	global_max_z = FindMaxZ()
-	#CalculateDistances(teleport_final)
-	#LinkTeleportesByMinimumDistance()
 
 func CalculateDistances(positions):
 	
@@ -245,59 +280,6 @@ func FindMeshIndex(mesh) -> int:
 	RETORNA O INDEX DA MESH
 	"""
 	return mesh_library.find_item_by_name(mesh)
-	"""
-func ChooseRandomMap() -> String:
-	
-	#RETORNA O NOME DE UM MAPA ALEATÓRIO CONFORME O PESO E EVITA REPETIÇÕES CONSECUTIVAS
-
-	var weights = [15, 8, level - 1]
-	
-	var map_index = rand_weighted(weights)
-	while map_index == previous_map:
-		map_index = rand_weighted(weights)
-	
-	previous_map = map_index
-	return String(maps_names[map_index])
-
-static func rand_weighted(weights: Array) -> int:
-	var sum = 0
-	for weight in weights:
-		sum += weight
-	
-	var num = randf_range(0, sum)
-	
-	for i in range(weights.size()):
-		if num < weights[i]:
-			return i
-		num -= weights[i]
-	return 0
-	"""
-func ChooseRandomMap():
-	"""
-	VERSAO DE TESTE: SO USA AS SECOES QUE FORAM REGISTRADAS NO SELETOR
-	"""
-	verify(level)
-	level += 1
-
-	var available: Array = section_selector.section_categories.keys()
- 
-	var chosen: String = section_selector.choose_next_section(available)
- 
-	print(section_selector.debug_state(), "  ->  ", chosen)
- 
-	return chosen
-
-func verify(n):
-	if level == 2:
-		EASY = false
-		MID = true
-	if level == 5:
-		MID = false
-		HARD = true
-	if level == 7:
-		HARD = false
-		EASY = true
-		level = 0
 
 func CheckNextPlayerPosition(_position) -> Array:
 	"""
@@ -318,9 +300,6 @@ func CheckNextPlayerPosition(_position) -> Array:
 		return [cell_found, cell, object]
 	else:
 		return [cell_found, null, null]
-
-	#next(22.5, 0.3, -2.5)
-	#cell(22, 0, -2)
 	
 func CheckNextPosition(target_position):
 	var position_string: String = GetPositionAsString(floor(target_position))
@@ -336,13 +315,6 @@ func CheckNextPosition(target_position):
 func EraseCell(_position, _index) -> void:
 	"""
 	APAGA CELULA NAQUELA POSICAO
-	"""
-	"""for map_data in maps_data_list:
-			for i in range(1, len(map_data["cell_data"])):
-				var cell_data = map_data["cell_data"][i]
-				if cell_data["cell"] == Vector3i(floor(_position)):
-					cell_data["mesh_index"] = -1 
-					gridmap.set_cell_item(Vector3(_position.x -0.5, _position.y, _position.z - 1), -1)
 	"""
 	for i in range(len(maps_data_list)):
 		if GetPositionAsString(floor(_position)) in maps_data_list[i]["cell_data"]["cells"]:
@@ -360,19 +332,17 @@ func InstantiateAndAdd(mesh_scene, _x, _y, _z, mesh_index, orientation_data = nu
 	instance.transform.origin = Vector3(_x, _y, _z)
 	if orientation_data:
 		instance.transform.basis = Basis(Vector3(0, 1, 0), deg_to_rad(orientation_data["rotation"]))
-		#instance.transform.origin = orientation_data.get("offset", Vector3(_x, _y, _z))
 	add_child(instance)
 	objects_instances.append({"position": Vector3(_x, _y, _z), "instance": instance, "mesh": mesh_index})
-	#print(Vector3(_x, _y, _z), instance, mesh_index)
 	return instance
 	
 func InstantiateObject(_x, _y, _z, mesh_index, mesh_orientation = null):
 	var orientation_data: Dictionary = {
 		
-		0: 	{"rotation":	-90}, 	#PRA BAIXO 	# ORIENTACAO PADRAO		
-		22: {"rotation":	180},	#ESQUERDA	# S
-		10: {"rotation":	 90}, 	#CIMA		# SS
-		16: {"rotation":	  0}	#DIREITA	# SSS
+		0: 	{"rotation":	-90}, 	#PRA BAIXO	
+		22: {"rotation":	180},	#ESQUERDA
+		10: {"rotation":	 90}, 	#CIMA
+		16: {"rotation":	  0}	#DIREITA
 
 	}
 	var scenes: Dictionary = {
@@ -470,36 +440,28 @@ func ResetMap():
 	distances = []
 	teleport_final = []
 	count = 0
+	next_chunk_id = 0
 	maps_data_list = []
+	procedural_last_exit_x = 22
+	if section_selector != null:
+		section_selector.reset()
 
 func Init():
 	level = 0
-	EASY = true
-	MID = false
-	HARD = false
-	CreateMapsNamesList()
- 
+	procedural_last_exit_x = 22
+
+	randomize()
+	procedural_seed = randi()
+	section_factory = section_factory_script.new()
+
 	add_child(section_selector)
 	section_selector.reset()
- 
-	section_selector.register_sections_bulk({
-		"Section_38":  "risco",
-		"Section_21":  "rush",
-		"Section_9": "escolha",
-		"Section_1": "atraso",
-		"Section_60": "bifurcacao",
-		"Section_3": "recompensa",
-		"Section_8": "transicao",
-		"Section_22": "transicao",
-	})
- 
+
 	GenerateMap("Base")
 
 func RemoveDistantMap():
 	var oldest_map = maps_data_list[0]
-	#print(oldest_map["cell_data"])
 	for cell in oldest_map["cell_data"]["cells"]:
-		#print(GetObjectInstance(oldest_map["cell_data"]["cells"][cell][0]))
 		var obj_pos = Vector3(oldest_map["cell_data"]["cells"][cell][0].x + 0.5,oldest_map["cell_data"]["cells"][cell][0].y, oldest_map["cell_data"]["cells"][cell][0].z + 0.5)
 		var object_to_remove = GetObjectInstance(obj_pos)
 		if object_to_remove != null:

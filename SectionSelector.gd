@@ -10,7 +10,7 @@ const BIFURCACAO:	String = "bifurcacao"
 const RECOMPENSA:	String = "recompensa"
 const TRANSICAO:	String = "transicao"
 
-# ----- CLASSIFICACAO TENSAO / ALIVIO  -----
+# ----- CLASSIFICACAO -----
 const TENSE_CATEGORIES:  Array = [RISCO, RUSH, ESCOLHA]
 const RELIEF_CATEGORIES: Array = [RECOMPENSA, TRANSICAO, ATRASO]
 
@@ -63,13 +63,12 @@ const REPEAT_PENALTY:	float = 0.05
 const WINDOW_PENALTY:	float = 0.4
 const WINDOW_SIZE:		int   = 4
 const FORCE_RELIEF_AFTER: int = 3
+
 const WARMUP_SECTIONS:		int   = 3
 const RAMP_RATE:			float = 5.0
 const MAX_PROGRESSION_FACTOR: float = 3.0
 const TENSE_GAIN:			float = 0.8
 const RELIEF_DECAY:			float = 0.25
-
-var section_categories: Dictionary = {}
 
 # ----- ESTADO INTERNO -----
 var tension_level:				int		= 0
@@ -78,25 +77,14 @@ var recent_history:				Array	= []
 var consecutive_tense_count:	int		= 0
 var sections_played:			int		= 0
 
-func register_section(section_name: String, category: String) -> void:
-	section_categories[section_name] = category
-
-
-func register_sections_bulk(mapping: Dictionary) -> void:
-	for key in mapping.keys():
-		section_categories[key] = mapping[key]
-
-
-func choose_next_section(available_section_names: Array) -> String:
+func choose_and_register_category() -> String:
 	"""
-	ESCOLHE A PROXIMA SECAO A SER GERADA.
+	ESCOLHE A PROXIMA CATEGORIA E JA REGISTRA NO ESTADO INTERNO.
+	USADO PELO PIPELINE DE GERACAO PROCEDURAL (SectionBuilder).
 	"""
 	var category: String = _choose_category()
-	var candidates: Array = _sections_of_category(category, available_section_names)
-
-	var chosen: String = candidates[randi() % candidates.size()]
-	_register_choice(chosen)
-	return chosen
+	_register_category(category)
+	return category
 
 
 func reset() -> void:
@@ -109,7 +97,21 @@ func reset() -> void:
 	consecutive_tense_count = 0
 	sections_played = 0
 
+
+func debug_state() -> String:
+	"""
+	RETORNA UMA STRING COM O ESTADO ATUAL DO SELETOR (PARA LOGS).
+	"""
+	return "played=%d  tension=%d  last=%s  consec_tense=%d  window=%s  prog=%.2f  tMult=%.2f  rMult=%.2f" % [
+		sections_played, tension_level, last_category, consecutive_tense_count,
+		str(recent_history), _progression_factor(),
+		_tense_multiplier(), _relief_multiplier()
+	]
+
 func _choose_category() -> String:
+	"""
+	APLICA A LOGICA DE CURVA DE TENSAO + DIFICULDADE + PENALIDADES.
+	"""
 	if consecutive_tense_count >= FORCE_RELIEF_AFTER:
 		return _weighted_pick(_relief_only_weights())
 
@@ -139,35 +141,10 @@ func _choose_category() -> String:
 	return _weighted_pick(base_weights)
 
 
-func _progression_factor() -> float:
-	"""
-	FATOR LOGARITMICO DA DIFICULDADE (0 -> ~3)
-	"""
-	if sections_played <= WARMUP_SECTIONS:
-		return 0.0
-	var effective: int = sections_played - WARMUP_SECTIONS
-	var factor: float = log(1.0 + float(effective) / RAMP_RATE)
-	return min(factor, MAX_PROGRESSION_FACTOR)
-
-
-func _tense_multiplier() -> float:
-	return 1.0 + _progression_factor() * TENSE_GAIN
-
-
-func _relief_multiplier() -> float:
-	var m: float = 1.0 - _progression_factor() * RELIEF_DECAY
-	return max(m, 0.15)
-
-
-func _relief_only_weights() -> Dictionary:
-	return {
-		RECOMPENSA: 5,
-		TRANSICAO:  4,
-		ATRASO:		2
-	}
-
-
 func _weighted_pick(weights: Dictionary) -> String:
+	"""
+	SORTEIO PONDERADO ENTRE AS CATEGORIAS.
+	"""
 	var total: float = 0.0
 	for w in weights.values():
 		total += float(w)
@@ -184,16 +161,39 @@ func _weighted_pick(weights: Dictionary) -> String:
 	return weights.keys()[weights.size() - 1]
 
 
-func _sections_of_category(category: String, available: Array) -> Array:
-	var result: Array = []
-	for name in available:
-		if section_categories.has(name) and section_categories[name] == category:
-			result.append(name)
-	return result
+func _relief_only_weights() -> Dictionary:
+	"""
+	TABELA USADA QUANDO O CONSECUTIVE_TENSE TRIGGERA UM ALIVIO FORCADO.
+	"""
+	return {
+		RECOMPENSA: 5,
+		TRANSICAO:  4,
+		ATRASO:		2
+	}
 
-func _register_choice(section_name: String) -> void:
-	var category: String = section_categories.get(section_name, ATRASO)
+func _progression_factor() -> float:
+	"""
+	FATOR LOGARITMICO SATURADO DA DIFICULDADE (0 -> ~3)
+	"""
+	if sections_played <= WARMUP_SECTIONS:
+		return 0.0
+	var effective: int = sections_played - WARMUP_SECTIONS
+	var factor: float = log(1.0 + float(effective) / RAMP_RATE)
+	return min(factor, MAX_PROGRESSION_FACTOR)
 
+
+func _tense_multiplier() -> float:
+	return 1.0 + _progression_factor() * TENSE_GAIN
+
+
+func _relief_multiplier() -> float:
+	var m: float = 1.0 - _progression_factor() * RELIEF_DECAY
+	return max(m, 0.15)
+
+func _register_category(category: String) -> void:
+	"""
+	ATUALIZA O ESTADO INTERNO APOS UMA ESCOLHA.
+	"""
 	tension_level += TENSION_VALUE.get(category, 0)
 	tension_level = clamp(tension_level, -5, 10)
 
@@ -208,10 +208,3 @@ func _register_choice(section_name: String) -> void:
 
 	last_category = category
 	sections_played += 1
-
-func debug_state() -> String:
-	return "played=%d  tension=%d  last=%s  consec_tense=%d  window=%s  prog=%.2f  tMult=%.2f  rMult=%.2f" % [
-		sections_played, tension_level, last_category, consecutive_tense_count,
-		str(recent_history), _progression_factor(),
-		_tense_multiplier(), _relief_multiplier()
-	]
