@@ -23,7 +23,7 @@ extends GridMap
 @onready var fire_shooter_scene 		= preload("res://scenes/traps/shooter/FireShooter.tscn")
 @onready var one_fire_shooter_scene 	= preload("res://scenes/traps/shooter/OneFireShooter.tscn")
 @onready var one_slime_shooter_scene 	= preload("res://scenes/traps/Slime/OneSlimeShooter.tscn")
-@onready var section_factory_script = preload("res://scenes/ProceduralLevelGenerator/SectionFactory.gd")
+@onready var section_factory_script 	= preload("res://scenes/ProceduralLevelGenerator/SectionFactory.gd")
 
 @onready var section_selector: SectionSelector = SectionSelector.new()
 

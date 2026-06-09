@@ -117,9 +117,26 @@ func add_hazard(x: int, z: int, mesh: int, orientation: int = ORIENT_DOWN) -> bo
 func add_pushable(x: int, z: int, orientation: int = ORIENT_DOWN) -> bool:
 	return _try_add_object(x, z, GOLEM, orientation)
 
+func add_chest(x: int, z: int, orientation: int = ORIENT_DOWN) -> bool:
+	"""
+	COLOCA UM BAU NA POSICAO.
+	"""
+	var key: String = _key(Vector3i(x, floor_y, z))
+	if not floor_cells.has(key):
+		return false
+
+	clear_object(x, z)
+
+	var cell: Vector3i = Vector3i(x, floor_y, z)
+	floor_cells[key] = {"cell": cell, "mesh": CHEST, "orientation": orientation}
+	return true
+
 func _try_add_object(x: int, z: int, mesh: int, orientation: int) -> bool:
 	var floor_key: String = _key(Vector3i(x, floor_y, z))
 	if not floor_cells.has(floor_key):
+		return false
+
+	if floor_cells[floor_key]["mesh"] != floor_mesh:
 		return false
 	var obj_cell: Vector3i = Vector3i(x, floor_y + 1, z)
 	var obj_key: String = _key(obj_cell)
@@ -186,6 +203,78 @@ func ensure_4dir_connectivity() -> void:
 
 		carve_main(best_xu, z_lower)
 
+
+func verify_path_connectivity() -> bool:
+	"""
+	FAZ BFS DA ENTRADA ATE A SAIDA USANDO floor_cells COMO GRAFO.
+	RETORNA true SE A SAIDA E ALCANCAVEL A PARTIR DA ENTRADA EM 4 DIRECOES.
+	"""
+	var start: Vector3i = Vector3i(entry_x, floor_y, chunk_start_z)
+	var goal: Vector3i = Vector3i(exit_x, floor_y, chunk_start_z - depth + 1)
+
+	if not has_floor(start.x, start.z) or not has_floor(goal.x, goal.z):
+		return false
+
+	var visited: Dictionary = {}
+	var queue: Array = [start]
+	visited[_key(start)] = true
+
+	while not queue.is_empty():
+		var current: Vector3i = queue.pop_front()
+		if current.x == goal.x and current.z == goal.z:
+			return true
+		for delta in [Vector3i(1, 0, 0), Vector3i(-1, 0, 0), Vector3i(0, 0, 1), Vector3i(0, 0, -1)]:
+			var n: Vector3i = current + delta
+			var k: String = _key(n)
+			if not visited.has(k) and has_floor(n.x, n.z):
+				visited[k] = true
+				queue.append(n)
+
+	return false
+
+
+func _emergency_carve_path() -> void:
+	"""
+	FALLBACK USADO QUANDO verify_path_connectivity() FALHA.
+	ADICIONA O MINIMO NECESSARIO PARA CONECTAR, SEM DESTRUIR A
+	ESTRUTURA EXISTENTE DA SECAO.
+	"""
+	push_warning("[%s] caminho nao atravessavel - aplicando carve emergencial" % type_name())
+
+	var start: Vector3i = Vector3i(entry_x, floor_y, chunk_start_z)
+	var goal: Vector3i = Vector3i(exit_x, floor_y, chunk_start_z - depth + 1)
+	var reachable: Dictionary = {}
+	var queue: Array = [start]
+	reachable[_key(start)] = start
+
+	while not queue.is_empty():
+		var current: Vector3i = queue.pop_front()
+		for delta in [Vector3i(1, 0, 0), Vector3i(-1, 0, 0), Vector3i(0, 0, 1), Vector3i(0, 0, -1)]:
+			var n: Vector3i = current + delta
+			var k: String = _key(n)
+			if not reachable.has(k) and has_floor(n.x, n.z):
+				reachable[k] = n
+				queue.append(n)
+
+	var closest: Vector3i = start
+	var min_dist: int = abs(goal.x - start.x) + abs(goal.z - start.z)
+	for cell in reachable.values():
+		var d: int = abs(goal.x - cell.x) + abs(goal.z - cell.z)
+		if d < min_dist:
+			min_dist = d
+			closest = cell
+
+	var x_lo: int = min(closest.x, goal.x)
+	var x_hi: int = max(closest.x, goal.x)
+	for x in range(x_lo, x_hi + 1):
+		carve_main(x, closest.z)
+
+	var z_lo: int = min(closest.z, goal.z)
+	var z_hi: int = max(closest.z, goal.z)
+	for z in range(z_lo, z_hi + 1):
+		carve_main(goal.x, z)
+
+
 func finalize() -> void:
 	"""
 	APLICA TODAS AS GARANTIAS DE CONECTIVIDADE.
@@ -193,6 +282,12 @@ func finalize() -> void:
 	ensure_4dir_connectivity()
 	ensure_entry_clear()
 	ensure_exit_clear()
+
+	if not verify_path_connectivity():
+		_emergency_carve_path()
+		ensure_4dir_connectivity()
+		ensure_entry_clear()
+		ensure_exit_clear()
 
 func is_main_path(x: int, z: int) -> bool:
 	return main_path.has(_key(Vector3i(x, floor_y, z)))
