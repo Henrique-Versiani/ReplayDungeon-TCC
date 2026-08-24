@@ -219,8 +219,7 @@ func CreateMap(map_value) -> void:
 				InstantiateObject(cell.x + 0.5 , cell.y, cell.z  + 0.5, mesh)
 				gridmap.set_cell_item(Vector3(cell.x, cell.y, cell.z  ), mesh, orientation)
 			WEB_MESH:
-				InstantiateObject(cell.x + 0.5 , cell.y, cell.z  + 0.5, mesh)
-				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z  ), mesh, orientation)
+				InstantiateObject(cell.x + 0.5, cell.y - 1, cell.z + 0.5, mesh)
 			CHEST_MESH:
 				InstantiateObject(cell.x + 0.5 , cell.y, cell.z  + 0.5, mesh, orientation)
 				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z  ), mesh, orientation)
@@ -228,23 +227,29 @@ func CreateMap(map_value) -> void:
 				InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh)
 				gridmap.set_cell_item(Vector3(cell.x, cell.y, cell.z  ), mesh, orientation)
 			SPIKE_MESH:
-				InstantiateObject(cell.x + 0.5, cell.y + 0.2, cell.z  + 0.5, mesh)
-				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z  ), mesh, orientation)
+				InstantiateObject(cell.x + 0.5, cell.y - 0.75, cell.z  + 0.5, mesh)
 				
 			COIN_MESH: 			  InstantiateObject(cell.x + 0.5, cell.y - 0.2, cell.z + 0.5, mesh)
-			SAW_MESH: 			  InstantiateObject(cell.x + 0.5, cell.y -0.75, cell.z  + 0.5, mesh)
+			SAW_MESH:
+				var saw = InstantiateObject(cell.x + 0.5, cell.y - 0.75, cell.z + 0.5, mesh)
+				if orientation == 22:
+					saw.rotation.y = deg_to_rad(90)
+			FIRE_HORIZONTAL_MESH:
+				var fire = InstantiateObject(cell.x + 0.5, cell.y - 0.75, cell.z + 0.5, mesh)
+				# orientation=22 = fire VERTICAL: gira o no 90 em Y (X local vira Z do mundo)
+				if orientation == 22:
+					fire.rotation.y = deg_to_rad(90)
 			SPINNER_DOUBLE_MESH:  InstantiateObject(cell.x + 0.5, cell.y -0.75, cell.z  + 0.5, mesh)
 			ARROW_SHOOTER_MESH:   InstantiateObject(cell.x, cell.y, cell.z  + 0.5, mesh, orientation)
 			SLIME_SHOOTER_MESH:   InstantiateObject(cell.x + 0.5, cell.y + 0.6, cell.z + 0.5, mesh, orientation)
 			PUSHER_MESH: 		  InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh, orientation)
-			FIRE_HORIZONTAL_MESH: InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh, orientation)
 			FIRE_CIRCLE_MESH: 	  InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh, orientation)
 			BAT_ON_SPOT_MESH: 	  InstantiateObject(cell.x + 0.5, cell.y - 1, cell.z + 0.5, mesh)
 			BAT_CIRCLE_MESH: 	  InstantiateObject(cell.x + 0.5, cell.y - 1, cell.z + 0.5, mesh)
 			SKELETON_MESH: 		  InstantiateObject(cell.x + 0.5, cell.y - 1, cell.z + 0.5, mesh)	
 			GOLEM_MESH: 		  InstantiateObject(cell.x + 0.5, cell.y - 0.3, cell.z + 0.5, mesh)
 			FIRE_SHOOTER_MESH: 	  InstantiateObject(cell.x + 0.5, cell.y + 0.6, cell.z + 0.5, mesh, orientation)
-			ONE_FIRE_SHOOTER_MESH:  InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh, orientation)
+			ONE_FIRE_SHOOTER_MESH:  InstantiateObject(cell.x + 0.5, cell.y - 0.75, cell.z + 0.5, mesh, orientation)
 			ONE_SLIME_SHOOTER_MESH: InstantiateObject(cell.x + 0.5, cell.y + 0.6, cell.z + 0.5, mesh, orientation)
 			_:
 				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z ), mesh, orientation)
@@ -374,6 +379,7 @@ func InstantiateObject(_x, _y, _z, mesh_index, mesh_orientation = null):
 		instance.connect("erase_platform_falling", PlatformFallingTimerTimeout.bind(instance.position, 0))
 	if mesh_index == TELEPORTER_MESH:
 		TeleporterIsInstancied(instance, _x,_y,_z)
+	return instance
 	
 func TeleporterIsInstancied(instance, _x,_y,_z) -> void:
 	instance.UpdateShaderPosition(_x, _y, _z)

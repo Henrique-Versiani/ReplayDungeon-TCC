@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://cr8udv5a2kn58"]
+[gd_scene load_steps=7 format=3 uid="uid://cr8udv5a2kn58"]
 
 [ext_resource type="Script" path="res://scenes/traps/web/Web.gd" id="1_fmh2k"]
-[ext_resource type="PackedScene" uid="uid://do8sg1k5xvj2h" path="res://assets/Platform Kit/platform.glb" id="1_qcic5"]
 [ext_resource type="PackedScene" uid="uid://dohly64q686hp" path="res://scenes/traps/web/low_poly_spider_web.glb" id="2_mt2eb"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_utkor"]
@@ -44,10 +43,8 @@ _data = {
 }
 
 [node name="Web" type="Area3D"]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, -0.5, 0)
 script = ExtResource("1_fmh2k")
-
-[node name="platform" parent="." instance=ExtResource("1_qcic5")]
 
 [node name="low_poly_spider_web" parent="." instance=ExtResource("2_mt2eb")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.579575, 0)

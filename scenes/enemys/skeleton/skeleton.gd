@@ -59,7 +59,7 @@ func move_skeleton(direction: Vector3):
 	else:
 		animation_player.play("Jump_Full_Long")
 	var tween: Tween = create_tween().set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_EXPO)
-	tween.tween_property($".", "position", target_position, 0.7)
+	tween.tween_property($".", "position", target_position, 0.35)
 	await tween.finished
 
 func GetAngleToDirection(direction: Vector2) -> float:

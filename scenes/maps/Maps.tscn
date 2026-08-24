@@ -247,7 +247,6 @@ data = {
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
 [node name="Section_21" type="GridMap" parent="."]
-visible = false
 mesh_library = ExtResource("1_e30k7")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false
@@ -489,6 +488,7 @@ data = {
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
 [node name="Section_43" type="GridMap" parent="."]
+visible = false
 mesh_library = ExtResource("1_e30k7")
 cell_size = Vector3(1, 1, 1)
 cell_center_y = false

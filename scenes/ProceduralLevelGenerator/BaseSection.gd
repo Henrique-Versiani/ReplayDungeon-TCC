@@ -97,10 +97,6 @@ func replace_floor(x: int, z: int, new_mesh: int) -> void:
 	floor_cells[_key(cell)] = {"cell": cell, "mesh": new_mesh, "orientation": ORIENT_DOWN}
 
 func erase_floor(x: int, z: int) -> void:
-	"""
-	REMOVE CHAO DA POSICAO (CRIA BURACO).
-	NAO REMOVE SE FOR MAIN PATH.
-	"""
 	var key: String = _key(Vector3i(x, floor_y, z))
 	if main_path.has(key):
 		return
@@ -110,12 +106,37 @@ func add_decoration(x: int, z: int, mesh: int, orientation: int = ORIENT_DOWN) -
 	return _try_add_object(x, z, mesh, orientation)
 
 func add_hazard(x: int, z: int, mesh: int, orientation: int = ORIENT_DOWN) -> bool:
+	"""
+	ARMADILHAS LETAIS OU INIMIGOS. NUNCA EM CIMA DO MAIN_PATH.
+	"""
 	if is_main_path(x, z):
 		return false
 	return _try_add_object(x, z, mesh, orientation)
 
 func add_pushable(x: int, z: int, orientation: int = ORIENT_DOWN) -> bool:
 	return _try_add_object(x, z, GOLEM, orientation)
+
+func add_pushable_safe(x: int, z: int, orientation: int = ORIENT_DOWN) -> bool:
+	for delta in [Vector3i(1, 0, 0), Vector3i(-1, 0, 0), Vector3i(0, 0, 1), Vector3i(0, 0, -1)]:
+		var nx: int = x + delta.x
+		var nz: int = z + delta.z
+		var obj_key: String = _key(Vector3i(nx, floor_y + 1, nz))
+		if object_cells.has(obj_key):
+			if object_cells[obj_key]["mesh"] == GOLEM:
+				return false
+	return add_pushable(x, z, orientation)
+
+func add_saw_horizontal(x: int, z: int) -> bool:
+	"""
+	COLOCA UMA SERRA QUE SE MOVE HORIZONTALMENTE.
+	"""
+	for dx in range(-2, 3):
+		var floor_key: String = _key(Vector3i(x + dx, floor_y, z))
+		if not floor_cells.has(floor_key):
+			return false
+		if floor_cells[floor_key]["mesh"] != floor_mesh:
+			return false
+	return _try_add_object(x, z, SAW, ORIENT_DOWN)
 
 func add_chest(x: int, z: int, orientation: int = ORIENT_DOWN) -> bool:
 	"""
@@ -124,9 +145,7 @@ func add_chest(x: int, z: int, orientation: int = ORIENT_DOWN) -> bool:
 	var key: String = _key(Vector3i(x, floor_y, z))
 	if not floor_cells.has(key):
 		return false
-
 	clear_object(x, z)
-
 	var cell: Vector3i = Vector3i(x, floor_y, z)
 	floor_cells[key] = {"cell": cell, "mesh": CHEST, "orientation": orientation}
 	return true
@@ -135,8 +154,8 @@ func _try_add_object(x: int, z: int, mesh: int, orientation: int) -> bool:
 	var floor_key: String = _key(Vector3i(x, floor_y, z))
 	if not floor_cells.has(floor_key):
 		return false
-
-	if floor_cells[floor_key]["mesh"] != floor_mesh:
+	var floor_mesh_type = floor_cells[floor_key]["mesh"]
+	if floor_mesh_type != floor_mesh and floor_mesh_type != PLATFORM_FALLING:
 		return false
 	var obj_cell: Vector3i = Vector3i(x, floor_y + 1, z)
 	var obj_key: String = _key(obj_cell)
@@ -163,9 +182,6 @@ func ensure_exit_clear() -> void:
 	clear_object(exit_x, exit_z)
 
 func ensure_4dir_connectivity() -> void:
-	"""
-	GARANTE QUE O MAIN_PATH SEJA ATRAVESSAVEL COM MOVIMENTO EM 4 DIRECOES.
-	"""
 	var by_z: Dictionary = {}
 	for cell in main_path.values():
 		if not by_z.has(cell.z):
@@ -197,18 +213,12 @@ func ensure_4dir_connectivity() -> void:
 
 		if best_dist == 0:
 			continue
-
 		if has_floor(best_xu, z_lower) or has_floor(best_xl, z_upper):
 			continue
-
 		carve_main(best_xu, z_lower)
 
 
 func verify_path_connectivity() -> bool:
-	"""
-	FAZ BFS DA ENTRADA ATE A SAIDA USANDO floor_cells COMO GRAFO.
-	RETORNA true SE A SAIDA E ALCANCAVEL A PARTIR DA ENTRADA EM 4 DIRECOES.
-	"""
 	var start: Vector3i = Vector3i(entry_x, floor_y, chunk_start_z)
 	var goal: Vector3i = Vector3i(exit_x, floor_y, chunk_start_z - depth + 1)
 
@@ -234,11 +244,6 @@ func verify_path_connectivity() -> bool:
 
 
 func _emergency_carve_path() -> void:
-	"""
-	FALLBACK USADO QUANDO verify_path_connectivity() FALHA.
-	ADICIONA O MINIMO NECESSARIO PARA CONECTAR, SEM DESTRUIR A
-	ESTRUTURA EXISTENTE DA SECAO.
-	"""
 	push_warning("[%s] caminho nao atravessavel - aplicando carve emergencial" % type_name())
 
 	var start: Vector3i = Vector3i(entry_x, floor_y, chunk_start_z)
@@ -276,9 +281,6 @@ func _emergency_carve_path() -> void:
 
 
 func finalize() -> void:
-	"""
-	APLICA TODAS AS GARANTIAS DE CONECTIVIDADE.
-	"""
 	ensure_4dir_connectivity()
 	ensure_entry_clear()
 	ensure_exit_clear()

@@ -1,10 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://dcs0v6q7mqcxn"]
+[gd_scene load_steps=12 format=3 uid="uid://dcs0v6q7mqcxn"]
 
 [ext_resource type="Script" path="res://FireShooter.gd" id="1_8cmy8"]
 [ext_resource type="Texture2D" uid="uid://mh3c07jlhgl7" path="res://assets/shooter/Textures/Obstacles_Color_Palette_01.png" id="1_qrv0l"]
 [ext_resource type="AudioStream" uid="uid://dpe8ds3tgh7f0" path="res://assets/audio/slimeshot.wav" id="2_h5yeo"]
 [ext_resource type="PackedScene" uid="uid://cshx3acuf0fog" path="res://scenes/traps/shooter/FireBall.tscn" id="3_s87ge"]
-[ext_resource type="PackedScene" uid="uid://do8sg1k5xvj2h" path="res://assets/Platform Kit/platform.glb" id="4_s7x7a"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x8xu1"]
 albedo_color = Color(0.862745, 0, 0.368627, 1)
@@ -118,9 +117,6 @@ max_polyphony = 5
 
 [node name="FireBall" parent="." instance=ExtResource("3_s87ge")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.65, 7.5)
-
-[node name="platform" parent="." instance=ExtResource("4_s7x7a")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.022, 0)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

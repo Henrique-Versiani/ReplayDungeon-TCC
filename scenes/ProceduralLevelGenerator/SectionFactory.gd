@@ -38,6 +38,9 @@ func _create_section(
 			return TransicaoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
 		RECOMPENSA:
 			return RecompensaSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
+		ATRASO:
+			return AtrasoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
+		RISCO:
+			return RiscoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
 		_:
-			print("[SectionFactory] tipo '%s' ainda nao implementado - usando TransicaoSection" % type_name)
 			return TransicaoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
