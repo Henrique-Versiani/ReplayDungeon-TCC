@@ -42,5 +42,7 @@ func _create_section(
 			return AtrasoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
 		RISCO:
 			return RiscoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
+		RUSH:
+			return RushSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
 		_:
 			return TransicaoSection.new(entry_x, chunk_start_z, base_seed, chunk_id, floor_y, floor_mesh)
