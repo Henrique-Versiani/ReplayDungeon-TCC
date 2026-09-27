@@ -66,7 +66,8 @@ var level:          int = 0
 var section_factory
 var procedural_last_exit_x: int = 22
 
-@export var procedural_seed: int = 51257
+@export var use_fixed_seed: bool = false
+@export var procedural_seed: int = 1231231
 @export var procedural_floor_y: int = 0
 @export var procedural_floor_mesh: int = 1
 
@@ -223,9 +224,6 @@ func CreateMap(map_value) -> void:
 			CHEST_MESH:
 				InstantiateObject(cell.x + 0.5 , cell.y, cell.z  + 0.5, mesh, orientation)
 				gridmap.set_cell_item(Vector3(cell.x, cell.y , cell.z  ), mesh, orientation)
-			TELEPORTER_MESH:
-				InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh)
-				gridmap.set_cell_item(Vector3(cell.x, cell.y, cell.z  ), mesh, orientation)
 			SPIKE_MESH:
 				InstantiateObject(cell.x + 0.5, cell.y - 0.75, cell.z  + 0.5, mesh)
 				
@@ -240,7 +238,6 @@ func CreateMap(map_value) -> void:
 				if orientation == 22:
 					fire.rotation.y = deg_to_rad(90)
 			SPINNER_DOUBLE_MESH:  InstantiateObject(cell.x + 0.5, cell.y -0.75, cell.z  + 0.5, mesh)
-			ARROW_SHOOTER_MESH:   InstantiateObject(cell.x, cell.y, cell.z  + 0.5, mesh, orientation)
 			SLIME_SHOOTER_MESH:   InstantiateObject(cell.x + 0.5, cell.y + 0.6, cell.z + 0.5, mesh, orientation)
 			PUSHER_MESH: 		  InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh, orientation)
 			FIRE_CIRCLE_MESH: 	  InstantiateObject(cell.x + 0.5, cell.y, cell.z + 0.5, mesh, orientation)
@@ -456,12 +453,24 @@ func Init():
 	level = 0
 	procedural_last_exit_x = 22
 
-	randomize()
-	procedural_seed = randi()
+	if not use_fixed_seed:
+		randomize()
+		procedural_seed = randi()
+
+	# SEMEIA TAMBEM O RNG GLOBAL: ARMADILHAS SORTEIAM PARAMETROS COM
+	# randf_range (EX.: move_speed DA SERRA). SEM ISSO, O LAYOUT SERIA
+	# REPRODUTIVEL MAS O COMPORTAMENTO DAS ARMADILHAS NAO.
+	seed(procedural_seed)
+
 	section_factory = section_factory_script.new()
 
-	add_child(section_selector)
+	if not section_selector.is_inside_tree():
+		add_child(section_selector)
+	# A SEMENTE PRECISA SER DEFINIDA ANTES DO reset(), QUE REARMA O RNG.
+	section_selector.set_seed(procedural_seed)
 	section_selector.reset()
+
+	print("[GridMapManager] procedural_seed = %d (fixa=%s)" % [procedural_seed, str(use_fixed_seed)])
 
 	GenerateMap("Base")
 
